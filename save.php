@@ -1,0 +1,3 @@
+<?php
+// Speichern von Daten
+?>

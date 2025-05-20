@@ -1,0 +1,3 @@
+<?php
+// Löschen von Datensätzen
+?>

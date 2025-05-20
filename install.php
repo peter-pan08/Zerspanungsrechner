@@ -1,13 +1,56 @@
 <?php
-// Erstkonfiguration: Datenbanktabellen anlegen
-require 'config.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-$conn = new mysqli($host, $user, $pass, $db);
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Installationsassistent</title>
+  <style>
+    body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 600px; margin: auto; padding-top: 40px; }
+    input { width: 100%; padding: 10px; margin: 8px 0; background: #415a77; border: 1px solid #778da9; color: white; }
+    button { padding: 10px; width: 100%; background: #00b4d8; border: none; color: black; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>🛠️ Web-Installer: Zerspanungsrechner</h2>
+  <form method="post">
+    <label>Datenbank-Host:</label>
+    <input name="dbhost" value="localhost" required>
+    <label>Datenbank-Benutzer (z. B. root):</label>
+    <input name="dbuser" required>
+    <label>Datenbank-Passwort:</label>
+    <input type="password" name="dbpass">
+    <label>Datenbank-Name (wird erstellt wenn nötig):</label>
+    <input name="dbname" required>
+    <label>App-Benutzername für Zugriff:</label>
+    <input name="appuser" required>
+    <label>App-Benutzerpasswort:</label>
+    <input type="password" name="apppass" required>
+    <button type="submit">Installation starten</button>
+  </form>
+</body>
+</html>
+<?php exit; }
+
+$dbhost = $_POST['dbhost'];
+$dbuser = $_POST['dbuser'];
+$dbpass = $_POST['dbpass'];
+$dbname = $_POST['dbname'];
+$appuser = $_POST['appuser'];
+$apppass = $_POST['apppass'];
+
+$conn = new mysqli($dbhost, $dbuser, $dbpass);
 if ($conn->connect_error) {
-  die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+  die("<p>❌ Verbindungsfehler: " . $conn->connect_error . "</p>");
 }
+$conn->query("CREATE DATABASE IF NOT EXISTS `$dbname`") or die("<p>Fehler beim Erstellen der DB: " . $conn->error . "</p>");
+$conn->query("USE `$dbname`") or die("<p>Fehler beim Wechseln zur DB: " . $conn->error . "</p>");
 
-$queries = [
+$tables = [
   "CREATE TABLE IF NOT EXISTS materialien (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100),
@@ -22,15 +65,47 @@ $queries = [
     typ VARCHAR(50),
     gruppen VARCHAR(20),
     vc FLOAT
+  )",
+  "CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rolle VARCHAR(20) DEFAULT 'admin'
   )"
 ];
 
-foreach ($queries as $sql) {
-  if ($conn->query($sql) === TRUE) {
-    echo "OK<br>";
-  } else {
-    echo "Fehler: " . $conn->error . "<br>";
+foreach ($tables as $sql) {
+  if (!$conn->query($sql)) {
+    echo "<p>❌ Fehler bei SQL: " . $conn->error . "</p>";
   }
 }
-$conn->close();
+
+$conn->query("CREATE USER IF NOT EXISTS '$appuser'@'localhost' IDENTIFIED BY '$apppass'");
+$conn->query("GRANT SELECT, INSERT, UPDATE, DELETE ON `$dbname`.* TO '$appuser'@'localhost'");
+$conn->query("FLUSH PRIVILEGES");
+
+$ph = password_hash("admin123", PASSWORD_DEFAULT);
+$conn->query("INSERT IGNORE INTO users (username, password_hash) VALUES ('admin', '$ph')");
+
+$config = <<<PHP
+<?php
+\$host = '$dbhost';
+\$user = '$appuser';
+\$pass = '$apppass';
+\$db = '$dbname';
+?>
+PHP;
+file_put_contents("config.php", $config);
+
+echo <<<HTML
+<h2>✅ Installation abgeschlossen</h2>
+<p><strong>config.php</strong> wurde erfolgreich gespeichert.</p>
+<p>Verwendeter Datenbankbenutzer (App): <strong>$appuser</strong></p>
+<p>Die Datenbank <strong>$dbname</strong> wurde vorbereitet.</p>
+<p>Du kannst dich jetzt mit dem Admin-Benutzer <strong>admin</strong></p>
+<p>und dem Passwort <strong>admin123</strong></p>
+<p>unter <code>login.php</code> anmelden.</p>
+<p><em>Tipp: Schütze die Datei <code>config.php</code> mit CHMOD 640</em></p>
+HTML;
+
 ?>

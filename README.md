@@ -12,98 +12,31 @@ Dieses Projekt stellt einen webbasierten Zerspanungsrechner zur Verfügung. Mate
 
 ## Installation
 
-1. **Voraussetzungen**
-   - Apache oder Nginx mit PHP
-   - MariaDB
-   - PHP mysqli-Erweiterung
+1. Lade das Projekt auf deinen Webserver
+2. Rufe im Browser `install.php` auf und folge den Schritten
+3. Danach steht dir der Login zur Verfügung unter `login.php`
 
-2. **Datenbank importieren**
+## Benutzerverwaltung
 
-```sql
-CREATE DATABASE drehbank;
-USE drehbank;
+- Standardnutzer: `admin`
+- Passwort: `admin123`
+- Benutzer lassen sich in der DB verwalten (Tabelle `users`)
 
-CREATE TABLE materialien (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100),
-  gruppe VARCHAR(1),
-  vc_hss FLOAT,
-  vc_hartmetall FLOAT,
-  kc FLOAT
-);
+## 🔐 Rechteverwaltung
 
-CREATE TABLE platten (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100),
-  typ VARCHAR(50),
-  gruppen VARCHAR(20),
-  vc FLOAT
-);
-```
+Jeder Benutzer in der `users`-Tabelle hat ein Rollenfeld `rolle`, z. B.:
 
-3. **Dateien in deinen Webordner kopieren**  
-(z. B. `/var/www/html/drehbank/`)
+- `admin` → uneingeschränkter Zugriff
+- `editor` → eingeschränkter Zugriff (kein Systemupdate)
+- `viewer` → nur Leserechte
 
-4. **Datenbankverbindung anpassen in `config.php`**
+`$_SESSION['rolle']` wird zur Zugriffskontrolle verwendet.
 
-```php
-$host = 'localhost';
-$user = 'DEIN_USER';
-$pass = 'DEIN_PASSWORT';
-$db = 'drehbank';
-```
+## 🛠 Update-Modul
 
-5. **Seite im Browser öffnen**
+Die Datei `update.php` kann verwendet werden, um Systemänderungen oder DB-Strukturprüfungen durchzuführen.
 
-- Hauptseite: `https://deine-domain/drehbank/zerspanung.html`
-- Adminbereich: `https://deine-domain/drehbank/admin.html`
+## Sicherheit
 
-## Backup-Hinweis
-
-Dieses Repository enthält alle Dateien, um die Seite und die Datenbankstruktur jederzeit neu aufzusetzen.
-
-
-## Admin-Zugang schützen (optional empfohlen)
-
-1. `.htaccess` und `.htpasswd` verwenden:
-
-```bash
-sudo apt install apache2-utils
-htpasswd -c /var/www/html/drehbank/.htpasswd adminname
-```
-
-→ Dann `.htaccess` aktivieren:
-
-```apacheconf
-AuthType Basic
-AuthName "Adminbereich geschützt"
-AuthUserFile /var/www/html/drehbank/.htpasswd
-Require valid-user
-```
-
-2. Alternativ: Zugriffsschutz per PHP-Login oder Firewall.
-
-## Installation der Datenbankstruktur per Web:
-
-Einfach im Browser aufrufen:
-`https://deine-domain/drehbank/install.php`
-
-
-## Optional: Login-System (statt .htaccess)
-
-1. Benutzer-Tabelle importieren:
-
-```sql
-SOURCE users.sql;
-```
-
-2. Login starten unter: `login.php`
-
-3. Jede geschützte Seite beginnt mit:
-```php
-require 'session_check.php';
-```
-
-→ Beispiel-Zugang: Benutzer **admin** / Passwort **admin123**
-
-4. Abmelden: `logout.php`
+- Schütze `config.php` z. B. mit `chmod 640`
+- Login-Schutz ersetzt `.htaccess`, aber kann kombiniert werden

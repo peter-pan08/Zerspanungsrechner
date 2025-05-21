@@ -1,23 +1,27 @@
 <?php
 session_start();
-if (isset($_SESSION['user'])) {
-  header('Location: admin.html');
-  exit;
-}
 $error = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   require 'config.php';
-  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-  $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-  $stmt->execute([$_POST['username']]);
-  $user = $stmt->fetch();
-  if ($user && password_verify($_POST['password'], $user['password_hash'])) {
-    $_SESSION['user'] = $user['username'];
-    $_SESSION['rolle'] = $user['rolle'];
-    header('Location: admin.html');
-    exit;
-  } else {
-    $error = "Benutzername oder Passwort falsch.";
+  try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->execute([$_POST['username']]);
+    $user = $stmt->fetch();
+
+    if ($user && password_verify($_POST['password'], $user['password_hash'])) {
+      $_SESSION['user'] = $user['username'];
+      $_SESSION['rolle'] = $user['rolle'];
+      header('Location: admin.html');
+      exit;
+    } else {
+      $error = "❌ Benutzername oder Passwort ist falsch.";
+    }
+  } catch (PDOException $e) {
+    $error = "❌ Datenbankfehler: " . $e->getMessage();
   }
 }
 ?>
@@ -35,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <h2>🔐 Login Adminbereich</h2>
-  <?php if ($error) echo "<div class='error'>$error</div>"; ?>
+<?php if ($error) echo "<div class='error'>$error</div>"; ?>
   <form method="post">
     <input type="text" name="username" placeholder="Benutzername" required>
     <input type="password" name="password" placeholder="Passwort" required>

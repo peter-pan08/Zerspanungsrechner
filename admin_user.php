@@ -108,7 +108,7 @@ $nutzer = $pdo->query("SELECT * FROM users")->fetchAll();
           </form>
           <form method="post">
             <input type="hidden" name="id" value="<?= $n['id'] ?>">
-            <button type="submit" name="loeschen">🗑️ Löschen</button>
+            <button type="submit" name="loeschen" onclick="return confirm('Soll dieser Benutzer wirklich gelöscht werden?')">🗑️ Löschen</button>
           </form>
         </td>
       </tr>

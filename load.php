@@ -1,19 +1,22 @@
 <?php
 require 'config.php';
-try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
 
-    $stmt1 = $pdo->query("SELECT * FROM materialien ORDER BY name");
-    $materialien = $stmt1->fetchAll();
+$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt2 = $pdo->query("SELECT * FROM schneidplatten ORDER BY name");
-    $platten = $stmt2->fetchAll();
+header('Content-Type: application/json');
 
-    echo json_encode([
-        'materialien' => $materialien,
-        'platten' => $platten
-    ]);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
-}
+$data = [
+  "materialien" => [],
+  "platten" => []
+];
+
+// Materialdaten laden
+$mat_stmt = $pdo->query("SELECT id, name, gruppe, vc_hss, vc_hartmetall, kc FROM materialien ORDER BY name");
+$data["materialien"] = $mat_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Plattendaten laden
+$platt_stmt = $pdo->query("SELECT id, name, typ, gruppen, vc FROM platten ORDER BY name");
+$data["platten"] = $platt_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo json_encode($data);

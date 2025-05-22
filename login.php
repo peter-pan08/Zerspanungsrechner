@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="top-links">
     <a href="admin.html">🔧 Adminbereich</a>
     <a href="admin_user.php">👥 Benutzerverwaltung</a>
-    <a href="index.html">⬅️ Zurück zur Startseite</a>
+    <a href="zerspanung.html">⬅️ Zurück zur Startseite</a>
   </div>
   <meta charset="UTF-8">
   <title>Login</title>

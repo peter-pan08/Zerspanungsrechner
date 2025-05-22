@@ -1,42 +1,62 @@
-# Zerspanungsrechner (Webversion)
+# Zerspanungsrechner (Web-App)
 
-Dieses Projekt stellt einen webbasierten Zerspanungsrechner zur Verfügung. Materialien und Schneidplatten können über eine Adminoberfläche verwaltet werden. Die Hauptseite berechnet Schnittwerte und zeigt eine Leistungswarnung unter Berücksichtigung der Untersetzung.
+Ein interaktiver Zerspanungsrechner mit Materialdatenbank, Schneidplattenverwaltung, Benutzer-Login und Adminsteuerung – ideal für CNC-Projekte.
 
-## Features
+## ✅ Funktionen
 
-- Material- und Plattendatenbank (MariaDB)
-- Adminbereich mit Bearbeiten/Löschen
-- Leistungsanzeige + Warnung ab 80 % (Überlastung ab 95 %)
-- Unterstützung für konstante Drehzahl oder Schnittgeschwindigkeit
-- Responsive Webdesign mit dunklem CNC-Hintergrund
+- 💠 Material- und Schneidplatten-Datenbank (verwaltbar via Admin)
+- 🧮 Zerspanungsrechner mit Leistungsberechnung und Warnanzeige
+- 🌐 Benutzerverwaltung mit Rollen:
+  - `admin`: vollständiger Zugriff
+  - `editor`: eingeschränkte Verwaltung
+  - `viewer`: nur Nutzung des Rechners
+- 🔐 Login-/Logout-System mit Session-Handling
+- 📋 Eigene Passwortänderung über `profil.php`
+- 📝 Selbstregistrierung über `register.php` (automatisch `viewer`)
+- ⚠️ Schutz: Letzter Admin kann nicht gelöscht werden
+- 🧭 Navigation über alle Seiten integriert
+- 🛠 Webbasierter Installationsassistent (`install.php`)
 
-## Installation
+## 🚀 Installation
 
-1. Lade das Projekt auf deinen Webserver
-2. Rufe im Browser `install.php` auf und folge den Schritten
-3. Danach steht dir der Login zur Verfügung unter `login.php`
+1. Alles ins Webverzeichnis kopieren (z. B. `/var/www/html/drehbank`)
+2. Im Browser aufrufen: `https://DEIN_SERVER/drehbank/install.php`
+3. Zugangsdaten eingeben – DB, Benutzer, Passwort
+4. Nach erfolgreicher Einrichtung mit `admin` / `admin123` einloggen
+5. Neuen Admin anlegen und Demo-Admin löschen (WICHTIG!)
 
-## Benutzerverwaltung
+## 📂 Dateien & Seiten
 
-- Standardnutzer: `admin`
-- Passwort: `admin123`
-- Benutzer lassen sich in der DB verwalten (Tabelle `users`)
+| Datei               | Beschreibung                       |
+|---------------------|------------------------------------|
+| `install.php`       | Schritt-für-Schritt Installer      |
+| `login.php`         | Login-Seite                        |
+| `logout.php`        | Abmelden                           |
+| `register.php`      | Registrierung als viewer           |
+| `profil.php`        | Passwort ändern                    |
+| `admin_user.php`    | Benutzerverwaltung (Admin)         |
+| `admin.html`        | Admin-Bereich (Material, Platten)  |
+| `zerspanung.html`   | Hauptrechner für Schnittdaten      |
 
-## 🔐 Rechteverwaltung
+## 🔐 Sicherheitshinweise
 
-Jeder Benutzer in der `users`-Tabelle hat ein Rollenfeld `rolle`, z. B.:
+- `config.php` nach der Installation mit `chmod 640` sichern
+- Admin-Benutzer `admin` (Passwort: `admin123`) nach Einrichtung löschen
+- Nur Admins dürfen Benutzer löschen oder Rollen ändern
 
-- `admin` → uneingeschränkter Zugriff
-- `editor` → eingeschränkter Zugriff (kein Systemupdate)
-- `viewer` → nur Leserechte
+## 📦 Beispieldaten
 
-`$_SESSION['rolle']` wird zur Zugriffskontrolle verwendet.
+Eine Datei `beispieldaten.sql` mit Materialien, Platten und Demo-Nutzer ist enthalten.
 
-## 🛠 Update-Modul
+Import z. B. über:
+```bash
+mysql -u root -p drehbank < beispieldaten.sql
+```
 
-Die Datei `update.php` kann verwendet werden, um Systemänderungen oder DB-Strukturprüfungen durchzuführen.
+## 🤝 Mitmachen
 
-## Sicherheit
+Vorschläge, Bugs oder Features? → Pull Requests oder Issues auf GitHub willkommen!
 
-- Schütze `config.php` z. B. mit `chmod 640`
-- Login-Schutz ersetzt `.htaccess`, aber kann kombiniert werden
+---
+
+© 2025 – Projekt von [peter-pan08](https://github.com/peter-pan08)

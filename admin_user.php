@@ -24,8 +24,6 @@ if (isset($_POST['edit_benutzer'])) {
 
 // Benutzer löschen
 if (isset($_POST['loeschen'])) {
-
-// Verhindern, dass der letzte Admin gelöscht wird
 $admin_count = $pdo->query("SELECT COUNT(*) FROM users WHERE rolle = 'admin'")->fetchColumn();
 $stmt = $pdo->prepare("SELECT rolle FROM users WHERE id = ?");
 $stmt->execute([$_POST['id']]);
@@ -36,19 +34,6 @@ if ($user_to_delete['rolle'] === 'admin' && $admin_count <= 1) {
 } else {
   $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
   $stmt->execute([$_POST['id']]);
-}
-
-  $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
-  $stmt->execute([$_POST['id']]);
-}
-
-// Neuer Benutzer
-if (isset($_POST['neuer_benutzer'])) {
-  $username = $_POST['username'];
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-  $rolle = $_POST['rolle'];
-  $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
-  $stmt->execute([$username, $password, $rolle]);
 }
 
 $nutzer = $pdo->query("SELECT * FROM users")->fetchAll();
@@ -68,16 +53,6 @@ $nutzer = $pdo->query("SELECT * FROM users")->fetchAll();
   </style>
 </head>
 <body>
-<div class="top-nav" style="background:#1b263b;padding:10px;margin-bottom:20px;border-radius:8px;display:flex;flex-wrap:wrap;gap:10px;">
-  <a href="index.html" style="color:#00b4d8;text-decoration:none;font-weight:bold;">🏠 Startseite</a>
-  <a href="zerspanung.html" style="color:#00b4d8;text-decoration:none;font-weight:bold;">🧮 Zerspanung</a>
-  <a href="admin.html" style="color:#00b4d8;text-decoration:none;font-weight:bold;">⚙️ Admin</a>
-  <a href="admin_user.php" style="color:#00b4d8;text-decoration:none;font-weight:bold;">👥 Benutzer</a>
-  <a href="profil.php" style="color:#00b4d8;text-decoration:none;font-weight:bold;">👤 Profil</a>
-  <a href="register.php" style="color:#00b4d8;text-decoration:none;font-weight:bold;">📝 Registrieren</a>
-  <a href="login.php" style="color:#00b4d8;text-decoration:none;font-weight:bold;">🔐 Login</a>
-  <a href="logout.php" style="color:#00b4d8;text-decoration:none;font-weight:bold;">🚪 Logout</a>
-</div>
   <h2>Benutzerverwaltung</h2>
 
   <form method="post">
@@ -99,7 +74,7 @@ $nutzer = $pdo->query("SELECT * FROM users")->fetchAll();
         <td><?= $n['username'] ?></td>
         <td><?= $n['rolle'] ?></td>
         <td>
-          <?php if ($n['username'] !== 'admin'): ?>
+          
           <form method="post" style="margin-bottom:5px">
             <input type="hidden" name="id" value="<?= $n['id'] ?>">
             <input type="password" name="password" placeholder="Neues Passwort (leer = bleibt)">
@@ -114,9 +89,7 @@ $nutzer = $pdo->query("SELECT * FROM users")->fetchAll();
             <input type="hidden" name="id" value="<?= $n['id'] ?>">
             <button type="submit" name="loeschen">🗑️ Löschen</button>
           </form>
-          <?php else: ?>
-            <em>geschützt</em>
-          <?php endif; ?>
+          
         </td>
       </tr>
     <?php endforeach; ?>

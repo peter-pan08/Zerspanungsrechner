@@ -85,7 +85,7 @@ $conn->query("GRANT SELECT, INSERT, UPDATE, DELETE ON `$dbname`.* TO '$appuser'@
 $conn->query("FLUSH PRIVILEGES");
 
 $ph = password_hash("admin123", PASSWORD_DEFAULT);
-$conn->query("INSERT IGNORE INTO users (username, password_hash) VALUES ('admin', '$ph')");
+$conn->query("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES ('admin', '$ph', 'admin')");
 
 $config = <<<PHP
 <?php
@@ -102,10 +102,11 @@ echo <<<HTML
 <p><strong>config.php</strong> wurde erfolgreich gespeichert.</p>
 <p>Verwendeter Datenbankbenutzer (App): <strong>$appuser</strong></p>
 <p>Die Datenbank <strong>$dbname</strong> wurde vorbereitet.</p>
+<p><em>⚠️ Der Benutzer <strong>admin</strong> mit Passwort <strong>admin123</strong> ist ein Demo-Konto.<br>
+Bitte erstelle einen echten Admin und lösche das Demo-Konto anschließend aus der Benutzerverwaltung.</em></p>
 <p>Du kannst dich jetzt mit dem Admin-Benutzer <strong>admin</strong></p>
 <p>und dem Passwort <strong>admin123</strong></p>
 <p>unter <code>login.php</code> anmelden.</p>
 <p><em>Tipp: Schütze die Datei <code>config.php</code> mit CHMOD 640</em></p>
 HTML;
-
 ?>

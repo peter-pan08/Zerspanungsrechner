@@ -127,8 +127,7 @@
   <label for="f">Vorschub f (mm/U):</label>
   <input type="number" id="f" step="0.01" value="0.15" oninput="berechne()">
 
-  <label for="b">Schneidbreite b (mm):</label>
-  <input type="number" id="b" step="0.1" value="3" oninput="berechne()">
+  <!-- Schneidbreite b wird automatisch berechnet als b = 2 * ap -->
 
   <div class="result" id="ausgabe"></div>
 
@@ -164,7 +163,7 @@
       const d = parseFloat(document.getElementById("durchmesser").value);
       const ap = parseFloat(document.getElementById("ap").value);
       const f = parseFloat(document.getElementById("f").value);
-      const b = parseFloat(document.getElementById("b").value);
+      const b = 2 * ap; // automatisch berechnet
 
       const vc = schn === "hss" ? mat.vc_hss : mat.vc_hartmetall;
       const kc = mat.kc;
@@ -207,7 +206,7 @@
         <strong>Drehzahl:</strong> ${n.toFixed(0)} U/min <br>
         <strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min <br>
         <strong>Spanvolumen:</strong> ${q.toFixed(2)} cm³/min <br>
-        <strong>Leistungsaufnahme:</strong> ${leistung.toFixed(2)} kW <br>
+        <strong>Leistungsaufnahme:</strong> ${leistung.toFixed(2)} kW <br><strong>Motorlast:</strong> ${effektiveLast.toFixed(0)} W (${lastProzent.toFixed(0)} % von ${motorleistung} W) <br>
         <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N <br>
         <strong>Drehmoment:</strong> ${drehmoment.toFixed(1)} Nm <br><br>
         <strong>Ausgewählte Schneidplatte:</strong> ${platte.name} (${platte.typ}) – geeignet für ${gruppenText}, empfohlene vc: ${platte.vc} m/min

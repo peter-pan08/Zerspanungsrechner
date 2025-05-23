@@ -80,3 +80,14 @@ Fehler, Wünsche oder eigene Erweiterungen?
 ---
 
 © 2025 – Projekt von [peter-pan08](https://github.com/peter-pan08)
+
+
+## 🧪 Live-Demo
+
+Eine öffentliche, gesicherte Demoversion ist hier verfügbar:
+
+🔗 [Zerspanungsrechner Demo ansehen](https://dryba.com/Zerspanungsrechner/index.html)
+
+- ✔️ Alle Funktionen testbar
+- 🚫 Kein Löschen oder Bearbeiten in der Demo möglich
+- 🔐 Demo-Modus aktiv und geschützt

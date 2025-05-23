@@ -43,16 +43,70 @@ mysql -u root -p drehbank < beispieldaten.sql
 
 ---
 
+
+
 ## 📦 Erweiterungen installieren
 
-Im Projektordner:
+Zur Nutzung der Exportfunktionen (PDF, Excel) werden zwei PHP-Bibliotheken benötigt.
 
-```bash
-composer require tecnickcom/tcpdf
-composer require phpoffice/phpspreadsheet
+Wenn du das Projekt über Git oder ZIP herunterlädst, stelle sicher, dass sich im Projektordner `/var/www/html/drehbank` eine Datei `composer.json` befindet. Falls nicht, erstelle sie manuell:
+
+```json
+{
+  "require": {
+    "tecnickcom/tcpdf": "^6.6",
+    "phpoffice/phpspreadsheet": "^1.25"
+  }
+}
 ```
 
----
+### 🛠 Composer installieren & ausführen
+
+```bash
+cd /var/www/html/drehbank
+sudo apt install composer
+sudo -u www-data composer install
+```
+
+Wenn der Webserver-User (`www-data`) keinen Schreibzugriff hat:
+
+```bash
+sudo chown -R $USER:$USER /var/www/html/drehbank
+composer install
+sudo chown -R www-data:www-data /var/www/html/drehbank
+```
+
+Nach der Installation findest du im Ordner `vendor/` die Datei `autoload.php`. Diese wird in den Export-Skripten mit eingebunden:
+
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+```
+
+Damit sind alle Abhängigkeiten korrekt geladen.
+
+
+### 🔐 Sicherheitshinweis:
+
+Diese Befehle sollten **nicht als root** ausgeführt werden.
+
+Am besten führst du sie direkt als Webserver-User aus (z. B. `www-data`):
+
+```bash
+cd /var/www/html/drehbank
+sudo -u www-data composer install
+```
+
+Wenn das nicht möglich ist, kannst du auch temporär die Rechte anpassen:
+
+```bash
+sudo chown -R $USER:$USER /var/www/html/drehbank
+cd /var/www/html/drehbank
+composer install
+sudo chown -R www-data:www-data /var/www/html/drehbank
+```
+
+Das stellt sicher, dass Composer-Dateien im richtigen Besitz bleiben und keine root-Schreibrechte erhalten.
+
 
 ## 🔐 Sicherheit
 

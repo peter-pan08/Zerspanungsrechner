@@ -130,6 +130,9 @@
   <!-- Schneidbreite b wird automatisch berechnet als b = 2 * ap -->
 
   <div class="result" id="ausgabe"></div>
+<div id="exportLink" style="margin-top: 20px; display:none;">
+  <a href="export.php" target="_blank" style="background:#00b4d8;color:black;padding:10px 20px;text-decoration:none;font-weight:bold;border-radius:6px;">📤 Ergebnis exportieren</a>
+</div>
 
   <script>
     let materialien = [], platten = [];
@@ -201,6 +204,25 @@
       const gruppenText = platte.gruppen?.split(',').map(g => gruppenMap[g] || g).join(', ');
 
       document.getElementById("ausgabe").innerHTML = `
+
+document.getElementById("exportLink").style.display = "block";
+fetch("session_export.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    material: mat.name,
+    platte: platte.name,
+    vc: vc_berechnet.toFixed(1),
+    f: f,
+    ap: ap,
+    D: d,
+    n: n.toFixed(0),
+    vf: vf.toFixed(0),
+    pc: leistungWatt.toFixed(0),
+    md: drehmoment.toFixed(1)
+  })
+});
+
         <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]}) <br>
         <strong>Schnittgeschwindigkeit:</strong> ${vc_berechnet.toFixed(1)} m/min <br>
         <strong>Drehzahl:</strong> ${n.toFixed(0)} U/min <br>

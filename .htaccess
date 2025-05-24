@@ -1,4 +1,0 @@
-AuthType Basic
-AuthName "Adminbereich geschützt"
-AuthUserFile /var/www/html/drehbank/.htpasswd
-Require valid-user

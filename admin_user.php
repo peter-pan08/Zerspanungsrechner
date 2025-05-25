@@ -1,5 +1,9 @@
 Demo-Sperren einbauen
-<!DOCTYPE html>
+<?php
+  define('REQUIRE_SESSION', true);
+  $pageTitle = 'Zerspanungsrechner';
+  include 'header.php';
+?><!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -15,9 +19,6 @@ Demo-Sperren einbauen
   </style>
 </head>
 <body>
-  define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
-  $pageTitle = 'Dein Seitentitel hier';
-  include 'header.php';
 
   <h2>Benutzerverwaltung</h2>
 

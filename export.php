@@ -1,10 +1,11 @@
-<?php session_start(); ?>
+<?php
+  define('REQUIRE_SESSION', true);
+  $pageTitle = 'Zerspanungsrechner';
+  include 'header.php';
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
-   define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
-  $pageTitle = 'Dein Seitentitel hier';
-  include 'header.php';
   <meta charset="UTF-8">
   <title>Datenexport</title>
   <style>

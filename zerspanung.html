@@ -129,10 +129,6 @@
 
   <!-- Schneidbreite b wird automatisch berechnet als b = 2 * ap -->
 
-  <div class="result" id="ausgabe"></div>
-<div id="exportLink" style="margin-top: 20px; display:none;">
-  <a href="export.php" target="_blank" style="background:#00b4d8;color:black;padding:10px 20px;text-decoration:none;font-weight:bold;border-radius:6px;">📤 Ergebnis exportieren</a>
-</div>
 <div id="exportLink" style="margin-top: 20px; visibility: hidden;" id="exportLink">
   <a href="export.php" target="_blank" style="background:#00b4d8;color:black;padding:10px 20px;text-decoration:none;font-weight:bold;border-radius:6px;">📤 Ergebnis exportieren</a>
 </div>
@@ -209,6 +205,8 @@
       document.getElementById("ausgabe").innerHTML = `
         <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]}) <br>
         <strong>Schnittgeschwindigkeit:</strong> ${vc_berechnet.toFixed(1)} m/min <br>
+<strong>Spindeldrehzahl:</strong> ${n.toFixed(0)} U/min <br>
+<strong>Motordrehzahl:</strong> ${(n * untersetzung).toFixed(0)} U/min (mit Untersetzung ${untersetzung}) <br>
         <strong>Drehzahl:</strong> ${n.toFixed(0)} U/min <br>
         <strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min <br>
         <strong>Spanvolumen:</strong> ${q.toFixed(2)} cm³/min <br>
@@ -218,6 +216,8 @@
         <strong>Ausgewählte Schneidplatte:</strong> ${platte.name} (${platte.typ}) – geeignet für ${gruppenText}, empfohlene vc: ${platte.vc} m/min
         ${warnung}
       `;
+      // nach aller Logik und validen Ergebnissen
+      document.getElementById('exportLink').style.display = 'block';
     }
 
     function fuelleMaterialDropdown() {

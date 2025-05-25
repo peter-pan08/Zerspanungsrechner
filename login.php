@@ -1,16 +1,15 @@
 <?php
 require 'config.php';
-
-// Session starten
 session_start();
 
-// Bereits eingeloggt? Dann weiter zur Zerspanung
+// Bereits eingeloggt? Dann weiter zur Zerspanung (HTML-Datei)
 if (isset($_SESSION['user_id'])) {
-    header('Location: zerspanung.php');
+    header('Location: zerspanung.html');
     exit;
 }
 
 $error = '';
+$username = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -19,21 +18,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === '' || $password === '') {
         $error = 'Bitte Benutzername und Passwort eingeben.';
     } else {
-        // Mit Datenbank verbinden
         $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         if ($mysqli->connect_errno) {
-            $error = 'Fehler bei der Datenbankverbindung: ' . $mysqli->connect_error;
+            $error = 'Fehler bei der Datenbankverbindung.';
         } else {
-            $stmt = $mysqli->prepare("SELECT id, password_hash, rolle FROM users WHERE username = ? LIMIT 1");
+            $stmt = $mysqli->prepare(
+                "SELECT id, password_hash, rolle 
+                   FROM users 
+                  WHERE username = ? 
+                  LIMIT 1"
+            );
             $stmt->bind_param('s', $username);
             $stmt->execute();
             $stmt->bind_result($id, $hash, $rolle);
+
             if ($stmt->fetch() && password_verify($password, $hash)) {
-                // Credentials korrekt
-                $_SESSION['user_id'] = $id;
-                $_SESSION['username'] = $username;
-                $_SESSION['rolle'] = $rolle;
-                header('Location: zerspanung.php');
+                $_SESSION['user_id']   = $id;
+                $_SESSION['username']  = $username;
+                $_SESSION['rolle']     = $rolle;
+                header('Location: zerspanung.html');
                 exit;
             } else {
                 $error = 'Ungültiger Benutzername oder Passwort.';
@@ -47,75 +50,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Login</title>
+  <title>Login | Zerspanungsrechner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: sans-serif;
-      margin: 20px;
-      background-color: #0a0f14;
+      margin: 0;
+      background: #0a0f14;
       color: #e0e1dd;
-      background-image: url('A_digital_vector_illustration_depicts_a_CNC_lathe_.png');
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position: center center;
-      background-attachment: fixed;
-      background-blend-mode: multiply;
     }
+    /* Header-Navigation */
     .top-nav {
       background: #1b263b;
       padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 8px;
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 10px;
+    }
+    .top-nav img.logo {
+      height: 40px;
+      width: auto;
     }
     .top-nav a {
       color: #00b4d8;
       text-decoration: none;
       font-weight: bold;
     }
-    .top-nav a:hover { text-decoration: underline; }
-    main {
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
+    /* Login-Box */
+    .login-box {
       max-width: 400px;
-      margin: auto;
+      margin: 40px auto;
       background: #1b263b;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
-    h2 {
+    .login-box h2 {
       margin-top: 0;
       color: #e0e1dd;
     }
-    label {
+    .login-box label {
       display: block;
       margin-top: 10px;
       font-weight: bold;
     }
-    input {
+    .login-box input {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
       background: #415a77;
-      color: #e0e1dd;
       border: 1px solid #778da9;
+      color: #e0e1dd;
       border-radius: 4px;
     }
-    button {
+    .login-box button {
       width: 100%;
       padding: 10px;
       margin-top: 20px;
       background: #00b4d8;
-      color: #0a0f14;
       border: none;
-      font-size: 1em;
       font-weight: bold;
+      color: #000;
       border-radius: 4px;
       cursor: pointer;
     }
-    button:hover {
+    .login-box button:hover {
       background: #0096c7;
     }
     .error {
@@ -123,35 +124,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-weight: bold;
       margin-bottom: 10px;
     }
-    a.action-link {
-      display: block;
-      text-align: center;
-      margin-top: 15px;
-      color: #00b4d8;
-    }
   </style>
 </head>
 <body>
   <div class="top-nav">
-    <a href="index.php">🏠 Startseite</a>
+    <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
+    <a href="index.html">🏠 Startseite</a>
     <a href="register.php">📝 Registrieren</a>
   </div>
 
-  <main>
+  <div class="login-box">
     <h2>Login</h2>
     <?php if ($error): ?>
       <p class="error"><?= htmlspecialchars($error) ?></p>
     <?php endif ?>
     <form method="post" action="login.php">
       <label for="username">Benutzername</label>
-      <input type="text" id="username" name="username" value="<?= htmlspecialchars($username ?? '') ?>" required>
+      <input type="text" id="username" name="username" value="<?= htmlspecialchars($username) ?>" required>
 
       <label for="password">Passwort</label>
       <input type="password" id="password" name="password" required>
 
       <button type="submit">Einloggen</button>
     </form>
-    <a class="action-link" href="login.php?forgot=1">Passwort vergessen?</a>
-  </main>
+  </div>
 </body>
 </html>

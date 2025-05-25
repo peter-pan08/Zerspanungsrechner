@@ -1,31 +1,37 @@
 <?php
-  define('REQUIRE_SESSION', true);
-  $pageTitle = 'Zerspanungsrechner';
-  include 'header.php';
+require 'config.php';
 session_start();
-$error = "";
 
+// Wenn bereits eingeloggt, weiterleiten
+if (!empty($_SESSION['user_id'])) {
+    header('Location: zerspanung.html');
+    exit;
+}
+$error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  require 'config.php';
-  try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$_POST['username']]);
-    $user = $stmt->fetch();
-
-    if ($user && password_verify($_POST['password'], $user['password_hash'])) {
-      $_SESSION['user'] = $user['username'];
-      $_SESSION['rolle'] = $user['rolle'];
-      header('Location: admin.html');
-      exit;
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    // DB-Verbindung
+    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($mysqli->connect_error) {
+        $error = 'Datenbankverbindung fehlgeschlagen';
     } else {
-      $error = "❌ Benutzername oder Passwort ist falsch.";
+        $stmt = $mysqli->prepare("SELECT id, password_hash, rolle FROM users WHERE username = ?");
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+        $stmt->bind_result($id, $hash, $rolle);
+        if ($stmt->fetch() && password_verify($password, $hash)) {
+            // Login erfolgreich
+            $_SESSION['user_id'] = $id;
+            $_SESSION['username'] = $username;
+            $_SESSION['rolle'] = $rolle;
+            header('Location: zerspanung.html');
+            exit;
+        } else {
+            $error = 'Ungültiger Benutzername oder Passwort';
+        }
+        $stmt->close();
     }
-  } catch (PDOException $e) {
-    $error = "❌ Datenbankfehler: " . $e->getMessage();
-  }
 }
 ?>
 <!DOCTYPE html>

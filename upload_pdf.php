@@ -37,16 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
   </style>
 </head>
 <body>
-  <div class="top-nav">
-    <a href="index.html">🏠 Startseite</a>
-    <a href="zerspanung.html">🧮 Zerspanung</a>
-    <a href="admin.html">⚙️ Admin</a>
-    <a href="admin_user.php">👥 Benutzer</a>
-    <a href="profil.php">👤 Profil</a>
-    <a href="register.php">📝 Registrieren</a>
-    <a href="login.php">🔐 Login</a>
-    <a href="logout.php">🚪 Logout</a>
-  </div>
+   define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
+  $pageTitle = 'Dein Seitentitel hier';
+  include 'header.php';
 
   <h2>📤 PDF-Upload & Textanalyse</h2>
   <form method="post" enctype="multipart/form-data">

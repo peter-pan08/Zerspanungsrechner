@@ -1,5 +1,5 @@
 <?php
-  // session_check.php nur dort, wo nötig
+  // Für Seiten, die Session-Handling benötigen:
   if (defined('REQUIRE_SESSION')) {
     require 'session_check.php';
   }
@@ -8,14 +8,14 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title><?= $pageTitle ?? 'Zerspanungsrechner' ?></title>
+  <title><?= htmlspecialchars($pageTitle ?? 'Zerspanungsrechner') ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Logo */
+    /* Logo im Header */
     .logo {
-      height: 50px;
-      width: auto;
-      margin-right: 1rem;
+      height: 50px;       /* Zielfläche 50px hoch */
+      width: auto;        /* Seitenverhältnis beibehalten */
+      margin-right: 1rem; /* Abstand zu den Links */
       vertical-align: middle;
     }
     /* Gemeinsamer Header */
@@ -34,11 +34,13 @@
       text-decoration: none;
       font-weight: bold;
     }
-    .top-nav a:hover { text-decoration: underline; }
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-<div class="top-nav" style="background:#1b263b;padding:10px;margin-bottom:20px;border-radius:8px;display:flex;flex-wrap:wrap;gap:10px;">
+ <div class="top-nav" style="background:#1b263b;padding:10px;margin-bottom:20px;border-radius:8px;display:flex;flex-wrap:wrap;gap:10px;">
   <a href="index.html" style="color:#00b4d8;text-decoration:none;font-weight:bold;">🏠 Startseite</a>
   <a href="zerspanung.html" style="color:#00b4d8;text-decoration:none;font-weight:bold;">🧮 Zerspanung</a>
   <a href="admin.html" style="color:#00b4d8;text-decoration:none;font-weight:bold;">⚙️ Admin</a>

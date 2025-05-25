@@ -1,4 +1,7 @@
 <?php
+  define('REQUIRE_SESSION', true);
+  $pageTitle = 'Zerspanungsrechner';
+  include 'header.php';
 require 'session_check.php';
 if ($_SESSION['rolle'] !== 'admin') {
   die('Zugriff verweigert');
@@ -14,9 +17,6 @@ if ($_SESSION['rolle'] !== 'admin') {
     button { padding: 10px; width: 100%; background: #00b4d8; border: none; color: black; font-weight: bold; margin-top: 10px; }
   </style>
 </head>
- define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
-  $pageTitle = 'Dein Seitentitel hier';
-  include 'header.php';
 <body>
   <h2>🔄 Update-System</h2>
   <p>Hier könntest du später Tabellen aktualisieren, neue Felder hinzufügen usw.</p>

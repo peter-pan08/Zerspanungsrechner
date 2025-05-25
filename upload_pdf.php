@@ -1,5 +1,8 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
+  define('REQUIRE_SESSION', true);
+  $pageTitle = 'Zerspanungsrechner';
+  include 'header.php';
+  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
   $file = $_FILES['pdf']['tmp_name'];
   $dest = __DIR__ . '/uploads/' . basename($_FILES['pdf']['name']);
   if (!file_exists(__DIR__ . '/uploads')) {
@@ -37,9 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
   </style>
 </head>
 <body>
-   define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
-  $pageTitle = 'Dein Seitentitel hier';
-  include 'header.php';
 
   <h2>📤 PDF-Upload & Textanalyse</h2>
   <form method="post" enctype="multipart/form-data">

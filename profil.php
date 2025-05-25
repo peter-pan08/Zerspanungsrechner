@@ -1,4 +1,7 @@
 <?php
+  define('REQUIRE_SESSION', true);
+  $pageTitle = 'Zerspanungsrechner';
+  include 'header.php';
 require 'session_check.php';
 require 'config.php';
 
@@ -31,9 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
 </head>
 <body>
- define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
-  $pageTitle = 'Dein Seitentitel hier';
-  include 'header.php';
   <h2>👤 Mein Profil</h2>
   <p>Angemeldet als: <strong><?= htmlspecialchars($_SESSION['user']) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
   <form method="post">

@@ -1,4 +1,8 @@
-<?php require 'session_check.php'; ?>
+<?php
+  define('REQUIRE_SESSION', true);
+  $pageTitle = 'Zerspanungsrechner';
+  include 'header.php';
+?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -60,11 +64,6 @@
   </style>
 </head>
 <body>
-  <div class="top-nav">
- define('REQUIRE_SESSION', true); // nur in Seiten, die login erfordern
-  $pageTitle = 'Dein Seitentitel hier';
-  include 'header.php';
-  </div>
 
   <h2>Zerspanungsrechner</h2>
 

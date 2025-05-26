@@ -8,7 +8,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 $data = $_SESSION['export'] ?? [];
 
 // Neues PDF erzeugen
-tcpdf();
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator('Zerspanungsrechner');
 $pdf->SetAuthor('Zerspanungsrechner');
@@ -20,14 +19,14 @@ $pdf->addPage();
 // Logo einbinden: SVG bevorzugt, sonst PNG
 $logoSvg = __DIR__ . '/dryba_logo_100.svg';
 $logoPng = __DIR__ . '/dryba_logo_100.png';
-if (file_exists($logoSvg)) {
+if (file_exists($logoSvg) && method_exists($pdf, 'ImageSVG')) {
     // SVG einbinden
     $pdf->ImageSVG(
         $file = $logoSvg,
         $x = 15,
         $y = 10,
         $w = 40,
-        $h = '',
+        $h = 0,
         $link = '',
         $align = '',
         $palign = '',
@@ -36,14 +35,24 @@ if (file_exists($logoSvg)) {
     );
 } elseif (file_exists($logoPng)) {
     // PNG-Fallback
-    $pdf->Image($logoPng, 15, 10, 40, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+    $pdf->Image(
+        $logoPng,
+        $x = 15,
+        $y = 10,
+        $w = 40,
+        $h = 0,
+        $type = 'PNG',
+        $link = '',
+        $align = 'T',
+        $resize = true,
+        $dpi = 300
+    );
 }
 
 // Abstand nach Logo
 $pdf->Ln(20);
 
-// Überschrift
-$pdf->SetFont('helvetica', 'B', 16);
+// Überschrift\ n$pdf->SetFont('helvetica', 'B', 16);
 $pdf->Cell(0, 0, 'Zerspanungs-Ergebnis', 0, 1, 'C');
 $pdf->Ln(5);
 

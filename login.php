@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === '' || $password === '') {
         $error = 'Bitte Benutzername und Passwort eingeben.';
     } else {
-        $mysqli = new mysqli(host, user, pass, db);
+        $mysqli = new mysqli($host, $user, $pass, $db);
         if ($mysqli->connect_errno) {
             $error = 'Fehler bei der Datenbankverbindung.';
         } else {

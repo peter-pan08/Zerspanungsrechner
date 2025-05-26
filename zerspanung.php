@@ -4,12 +4,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require 'config.php';
 
-// Session starten
-session_start();
-
-// Bereits eingeloggt? Dann weiter zur Zerspanung
-if (isset($_SESSION['user_id'])) {
-    header('Location: zerspanung.php');
+session_start();           // M U S T vor isset($_SESSION)
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
     exit;
 }
 

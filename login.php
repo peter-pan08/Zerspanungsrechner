@@ -4,7 +4,7 @@ session_start();
 
 // Bereits eingeloggt? Dann weiter zur Zerspanung (HTML-Datei)
 if (isset($_SESSION['user_id'])) {
-    header('Location: zerspanung.html');
+    header('Location: zerspanung.php');
     exit;
 }
 

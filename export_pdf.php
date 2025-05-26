@@ -4,10 +4,11 @@ session_start();
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Hole Export-Daten aus der Session
+// Export-Daten aus der Session
 $data = $_SESSION['export'] ?? [];
 
 // Neues PDF erzeugen
+tcpdf();
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator('Zerspanungsrechner');
 $pdf->SetAuthor('Zerspanungsrechner');
@@ -16,26 +17,26 @@ $pdf->SetMargins(15, 30, 15);
 $pdf->SetAutoPageBreak(true, 20);
 $pdf->addPage();
 
-// Logo einbinden: PNG bevorzugt, sonst SVG
-$logoPng = __DIR__ . '/dryba_logo_100.png';
+// Logo einbinden: SVG bevorzugt, sonst PNG
 $logoSvg = __DIR__ . '/dryba_logo_100.svg';
-if (file_exists($logoPng)) {
-    // PNG-Logo bei 40 mm Breite
-    $pdf->Image($logoPng, 15, 10, 40, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-} elseif (file_exists($logoSvg) && method_exists($pdf, 'ImageSVG')) {
-    // SVG-Logo fallback
+$logoPng = __DIR__ . '/dryba_logo_100.png';
+if (file_exists($logoSvg)) {
+    // SVG einbinden
     $pdf->ImageSVG(
         $file = $logoSvg,
         $x = 15,
         $y = 10,
         $w = 40,
-        $h = 0,
+        $h = '',
         $link = '',
         $align = '',
         $palign = '',
         $border = 0,
         $fitonpage = true
     );
+} elseif (file_exists($logoPng)) {
+    // PNG-Fallback
+    $pdf->Image($logoPng, 15, 10, 40, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
 }
 
 // Abstand nach Logo
@@ -46,7 +47,7 @@ $pdf->SetFont('helvetica', 'B', 16);
 $pdf->Cell(0, 0, 'Zerspanungs-Ergebnis', 0, 1, 'C');
 $pdf->Ln(5);
 
-// Daten-Tabelle
+// Tabelle mit Daten
 $pdf->SetFont('helvetica', '', 12);
 $html = '<table cellpadding="4">';
 $labels = [
@@ -61,18 +62,14 @@ $labels = [
     'Leistungsaufnahme (kW)' => $data['pc'] ?? '-',
     'Motorlast (W)'          => $data['motorLast'] ?? '-',
     'Schnittkraft (N)'       => $data['Fc'] ?? '-',
-    'Drehmoment (Nm)'        => $data['md'] ?? ''
+    'Drehmoment (Nm)'        => $data['md'] ?? '-'
 ];
 foreach ($labels as $label => $value) {
-    $html .= '<tr>'
-           . '<td width="40%"><strong>' . $label . '</strong></td>'
-           . '<td>' . $value . '</td>'
-           . '</tr>';
+    $html .= '<tr><td width="40%"><strong>' . $label . '</strong></td><td>' . $value . '</td></tr>';
 }
 $html .= '</table>';
-
 $pdf->writeHTML($html, true, false, true, false, '');
 
-// Ausgabe im Browser
+// PDF-Ausgabe im Browser
 $pdf->Output('zerspanungsergebnis.pdf', 'I');
 exit;

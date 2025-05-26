@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id']   = $id;
                 $_SESSION['username']  = $username;
                 $_SESSION['rolle']     = $rolle;
-                header('Location: zerspanung.html');
+                header('Location: zerspanung.php');
                 exit;
             } else {
                 $error = 'Ungültiger Benutzername oder Passwort.';

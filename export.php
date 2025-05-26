@@ -34,12 +34,6 @@
   </style>
 </head>
 <body>
-  <div class="top-nav">
-    <a href="index.html">🏠 Startseite</a>
-    <a href="zerspanung.html">🧮 Zerspanung</a>
-    <a href="admin.html">⚙️ Admin</a>
-    <a href="export.php">📤 Export</a>
-  </div>
 
   <h2>📤 Ergebnisdaten exportieren</h2>
   <p>Wähle ein Format:</p>

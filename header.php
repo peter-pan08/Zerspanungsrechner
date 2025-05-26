@@ -43,7 +43,7 @@
   <div class="top-nav">
     <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
     <a href="index.html">🏠 Startseite</a>
-    <a href="zerspanung.html">🧮 Zerspanung</a>
+    <a href="zerspanung.php">🧮 Zerspanung</a>
     <a href="admin.html">⚙️ Admin</a>
     <a href="admin_user.php">👥 Benutzer</a>
     <a href="profil.php">👤 Profil</a>

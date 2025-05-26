@@ -88,6 +88,8 @@ Eine öffentliche, gesicherte Demoversion ist hier verfügbar:
 
 🔗 [Zerspanungsrechner Demo ansehen](https://dryba.com/Zerspanungsrechner/index.html)
 
+USR:admin
+PWD:admin123
 - ✔️ Alle Funktionen testbar
 - 🚫 Kein Löschen oder Bearbeiten in der Demo möglich
 - 🔐 Demo-Modus aktiv und geschützt

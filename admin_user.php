@@ -1,9 +1,9 @@
-Demo-Sperren einbauen
 <?php
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Zerspanungsrechner';
   include 'header.php';
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">

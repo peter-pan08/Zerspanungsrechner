@@ -86,7 +86,7 @@ Fehler, Wünsche oder eigene Erweiterungen?
 
 Eine öffentliche, gesicherte Demoversion ist hier verfügbar:
 
-🔗 [Zerspanungsrechner Demo ansehen](https://dryba.com/Zerspanungsrechner/index.html)
+🔗 [Zerspanungsrechner Demo ansehen](https://dryba.com/Zerspanungsrechner/index.php)
 
 USR:admin
 PWD:admin123

@@ -1,122 +1,67 @@
-<?php require 'session_check.php';
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-include 'header.php';
- ?>
+<?php require 'session_check.php'; ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
   <title>Zerspanungsrechner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 20px;
-      background-color: #0a0f14;
-      color: #e0e1dd;
-      background-image: url('A_digital_vector_illustration_depicts_a_CNC_lathe_.png');
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position: center center;
-      background-attachment: fixed;
-      background-blend-mode: multiply;
-    }
-    @media (max-width: 600px) {
-      body { margin: 10px; }
-      input, select, button { font-size: 1.1em; }
-    }
-    label { font-weight: bold; display: block; margin-top: 10px; }
-    input, select, button {
-      padding: 6px;
-      width: 100%;
-      margin-bottom: 10px;
-      background: #415a77;
-      color: #e0e1dd;
-      border: 1px solid #778da9;
-    }
-    .result {
-      margin-top: 20px;
-      background: #1b263b;
-      padding: 10px;
-      border: 1px solid #415a77;
-      white-space: pre-wrap;
-      display: none;
-    }
-    .warn { color: #ffba08; font-weight: bold; margin-top: 10px; }
-    .over { color: #ff4d6d; font-weight: bold; margin-top: 10px; }
-    .top-nav {
-      background: #1b263b;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .top-nav a {
-      color: #00b4d8;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .top-nav a:hover { text-decoration: underline; }
-    h2 { color: #e0e1dd; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <?php include 'header.php'; ?>
 
   <h2>Zerspanungsrechner</h2>
 
-  <label for="motorleistung">Motorleistung (Watt):</label>
-  <input type="number" id="motorleistung" value="750" oninput="berechne()">
+  <div class="calculator-form">
+    <label for="motorleistung">Motorleistung (Watt):</label>
+    <input type="number" id="motorleistung" value="750" oninput="berechne()">
 
-  <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
-  <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
+    <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
+    <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
 
-  <label for="material">Material:</label>
-  <select id="material" onchange="berechne()"></select>
+    <label for="material">Material:</label>
+    <select id="material" onchange="berechne()"></select>
 
-  <label for="schneidstoff">Schneidstoff:</label>
-  <select id="schneidstoff" onchange="berechne()">
-    <option value="hss">HSS</option>
-    <option value="hartmetall" selected>Hartmetall</option>
-  </select>
+    <label for="schneidstoff">Schneidstoff:</label>
+    <select id="schneidstoff" onchange="berechne()">
+      <option value="hss">HSS</option>
+      <option value="hartmetall" selected>Hartmetall</option>
+    </select>
 
-  <label for="schneidplatte">Schneidplatte:</label>
-  <select id="schneidplatte" onchange="berechne()"></select>
+    <label for="schneidplatte">Schneidplatte:</label>
+    <select id="schneidplatte" onchange="berechne()"></select>
 
-  <label for="modus">Modus:</label>
-  <select id="modus" onchange="umschaltenModus(); berechne();">
-    <option value="vc" selected>Konstante Schnittgeschwindigkeit</option>
-    <option value="n">Konstante Drehzahl</option>
-  </select>
+    <label for="modus">Modus:</label>
+    <select id="modus" onchange="umschaltenModus(); berechne();">
+      <option value="vc" selected>Konstante Schnittgeschwindigkeit</option>
+      <option value="n">Konstante Drehzahl</option>
+    </select>
 
-  <label for="durchmesser">Werkstückdurchmesser (mm):</label>
-  <input type="number" id="durchmesser" value="100" oninput="berechne()">
+    <label for="durchmesser">Werkstückdurchmesser (mm):</label>
+    <input type="number" id="durchmesser" value="100" oninput="berechne()">
 
-  <div id="drehzahlEingabe" style="display:none;">
-    <label for="n_manuell">Drehzahl n (1/min):</label>
-    <input type="number" id="n_manuell" value="300" oninput="berechne()">
+    <div id="drehzahlEingabe" style="display:none">
+      <label for="n_manuell">Drehzahl n (1/min):</label>
+      <input type="number" id="n_manuell" value="300" oninput="berechne()">
+    </div>
+
+    <label for="ap">Zustellung ap (mm, Radiusmaß):</label>
+    <input type="number" id="ap" step="0.01" value="0.5" oninput="berechne()">
+    <small class="note">Die zustellung ist der Radius, nicht der Durchmesser.</small>
+
+    <label for="f">Vorschub f (mm/U):</label>
+    <input type="number" id="f" step="0.01" value="0.15" oninput="berechne()">
   </div>
 
-  <label for="ap">Zustellung ap (mm) (Radius):</label>
-  <input type="number" id="ap" step="0.01" value="0.5" oninput="berechne()">
-
-  <label for="f">Vorschub f (mm/U):</label>
-  <input type="number" id="f" step="0.01" value="0.15" oninput="berechne()">
-
-  <!-- Ausgabe -->
   <div class="result" id="ausgabe"></div>
 
-  <!-- Export-Button -->
-  <div id="exportLink" style="display:none; margin-top:20px;">
-    <a href="export.php" target="_blank" style="background:#00b4d8; color:black; padding:10px 20px; text-decoration:none; font-weight:bold; border-radius:6px;">📤 Ergebnis exportieren</a>
+  <div id="exportLink" class="export-btn" style="display:none;">
+    <a href="export.php" target="_blank">📤 Ergebnis exportieren</a>
   </div>
 
   <script>
     let materialien = [], platten = [];
-    const gruppenMap = { P:"Stahl", M:"Edelstahl", K:"Gusseisen", N:"NE-Metalle", S:"Superlegierungen", H:"gehärteter Stahl" };
+    const gruppenMap = { P: 'Stahl', M: 'Edelstahl', K: 'Gusseisen', N: 'NE-Metalle', S: 'Superlegierungen', H: 'gehärteter Stahl' };
 
     async function ladeDaten() {
       const res = await fetch('load.php');
@@ -128,85 +73,67 @@ include 'header.php';
       berechne();
     }
 
-    function umschaltenModus() {
-      document.getElementById('drehzahlEingabe').style.display =
-        document.getElementById('modus').value === 'n' ? 'block' : 'none';
-    }
-
     function berechne() {
       if (!materialien.length) return;
-      const motorleistung = parseFloat(document.getElementById('motorleistung').value);
-      const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
-      const d = parseFloat(document.getElementById('durchmesser').value);
-      const ap = parseFloat(document.getElementById('ap').value);
-      const f = parseFloat(document.getElementById('f').value);
-
-      const mat = materialien[parseInt(document.getElementById('material').value)];
+      const mIndex = +document.getElementById('material').value;
+      const mat = materialien[mIndex];
       const schn = document.getElementById('schneidstoff').value;
-      const vc = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
-      const kc = mat.kc;
+      const modus = document.getElementById('modus').value;
+      const d = +document.getElementById('durchmesser').value;
+      const ap = +document.getElementById('ap').value;
+      const f = +document.getElementById('f').value;
+      const b = 2 * ap; // Schneidbreite
 
-      let n;
-      if (document.getElementById('modus').value === 'vc') {
-        n = (1000 * vc) / (Math.PI * d);
-      } else {
-        n = parseFloat(document.getElementById('n_manuell').value);
-      }
-
-      const b = 2 * ap;
+      const vcEmpf = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
+      let n = modus === 'vc'
+        ? (1000 * vcEmpf) / (Math.PI * d)
+        : +document.getElementById('n_manuell').value;
       const vf = n * f;
-      const vc_berechnet = (Math.PI * d * n) / 1000;
-      const q = ap * f * vc_berechnet;
-      const leistung = q * 0.25;
+
+      const kc = mat.kc;
       const Fc = kc * ap * b * 0.8;
-      const drehmoment = (Fc * d/2) / 1000;
-      const leistungWatt = leistung * 1000;
-      const motorLast = leistungWatt / untersetzung;
-      const lastProzent = (motorLast / motorleistung) * 100;
-      const nMot = n * untersetzung;
+      const M = (Fc * d/2) / 1000;
+      const PkW = (M * n) / 9550;
+      const P_W = PkW * 1000;
+
+      const motorLeistung = +document.getElementById('motorleistung').value;
+      const lastPct = (P_W / motorLeistung) * 100;
 
       let warnung = '';
-      if (lastProzent >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
-      else if (lastProzent >= 80) warnung = `<div class='warn'>⚠️ Leistungsgrenze erreicht (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
+      if (lastPct >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${P_W.toFixed(0)} W = ${lastPct.toFixed(0)}% von ${motorLeistung} W)</div>`;
+      else if (lastPct >= 80) warnung = `<div class='warn'>⚠️ Leistungsgrenze erreicht (${P_W.toFixed(0)} W = ${lastPct.toFixed(0)}% von ${motorLeistung} W)</div>`;
 
-      const platte = platten[parseInt(document.getElementById('schneidplatte').value)];
-      const gruppenText = platte.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
+      const pIndex = +document.getElementById('schneidplatte').value;
+      const plate = platten[pIndex];
+      const grpText = plate.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
 
       document.getElementById('ausgabe').innerHTML = `
         <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>
-        <strong>Schnittgeschwindigkeit:</strong> ${vc_berechnet.toFixed(1)} m/min<br>
-        <strong>Spindeldrehzahl:</strong> ${n.toFixed(0)} U/min<br>
-        <strong>Motordrehzahl:</strong> ${nMot.toFixed(0)} U/min (Untersetzung ${untersetzung})<br>
+        <strong>Schnittgeschwindigkeit:</strong> ${vcEmpf.toFixed(1)} m/min<br>
+        <strong>Drehzahl (Spindel):</strong> ${n.toFixed(0)} U/min<br>
         <strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min<br>
-        <strong>Spanvolumen:</strong> ${q.toFixed(2)} cm³/min<br>
-        <strong>Leistungsaufnahme (Spindel):</strong> ${leistung.toFixed(2)} kW<br>
-        <strong>Motorlast:</strong> ${motorLast.toFixed(0)} W (${lastProzent.toFixed(0)}% von ${motorleistung} W)<br>
+        <strong>Spanvolumen:</strong> ${(ap * f * vcEmpf / 1000).toFixed(2)} cm³/min<br>
         <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
-        <strong>Drehmoment:</strong> ${drehmoment.toFixed(1)} Nm<br><br>
-        <strong>Schneidplatte:</strong> ${platte.name} (${platte.typ}) – für ${gruppenText}, vc ${platte.vc} m/min
+        <strong>Drehmoment:</strong> ${M.toFixed(1)} Nm<br>
+        <strong>Leistungsaufnahme (Spindel):</strong> ${PkW.toFixed(2)} kW<br>
+        <strong>Motorlast:</strong> ${P_W.toFixed(0)} W (${lastPct.toFixed(0)}%)<br>
+        <strong>Ausgewählte Schneidplatte:</strong> ${plate.name} – ${grpText}<br>
         ${warnung}
       `;
-
-      document.getElementById('ausgabe').style.display = 'block';
       document.getElementById('exportLink').style.display = 'block';
-
-      fetch('session_export.php', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ material: mat.name, platte: platte.name, vc: vc_berechnet.toFixed(1), f, ap, D: d, n: n.toFixed(0), vf: vf.toFixed(0), pc: motorLast.toFixed(0), md: drehmoment.toFixed(1), nMot: nMot.toFixed(0) })
-      });
     }
 
     function fuelleMaterialDropdown() {
       const sel = document.getElementById('material'); sel.innerHTML = '';
-      materialien.forEach((m, i) => sel.innerHTML += `<option value="${i}">${m.name} (${m.gruppe} – ${gruppenMap[m.gruppe]})</option>`);
+      materialien.forEach((m,i) => sel.innerHTML += `<option value='${i}'>${m.name} (${m.gruppe} – ${gruppenMap[m.gruppe]})</option>`);
     }
-
     function fuellePlattenDropdown() {
       const sel = document.getElementById('schneidplatte'); sel.innerHTML = '';
-      platten.forEach((p, i) => sel.innerHTML += `<option value="${i}">${p.name} (${p.typ}) – für ${p.gruppen.split(',').map(g=>gruppenMap[g]).join(', ')}</option>`);
+      platten.forEach((p,i) => sel.innerHTML += `<option value='${i}'>${p.name} (${p.typ}) – für ${p.gruppen.split(',').map(g=>gruppenMap[g]).join(', ')}</option>`);
     }
-
+    function umschaltenModus() {
+      document.getElementById('drehzahlEingabe').style.display = document.getElementById('modus').value === 'n' ? 'block' : 'none';
+    }
     window.onload = ladeDaten;
   </script>
 </body>

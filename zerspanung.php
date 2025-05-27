@@ -37,57 +37,29 @@
     }
     .calculator-form {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 10px;
-      max-width: 600px;
+      max-width: 1000px;
       margin-bottom: 20px;
     }
-    label {
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 6px;
-      background: #415a77;
-      color: #e0e1dd;
-      border: 1px solid #778da9;
-    }
-    .note {
-      font-size: 0.9em;
-      color: #c0c1c2;
-      margin-top: -8px;
-      margin-bottom: 8px;
-    }
-    .result {
-      background: #1b263b;
-      padding: 10px;
-      border: 1px solid #415a77;
-      max-width: 600px;
-      margin-bottom: 20px;
-    }
+    label { font-weight: bold; }
+    input, select { width: 100%; padding: 6px; background: #415a77; color: #e0e1dd; border: 1px solid #778da9; }
+    .note { font-size: 0.9em; color: #c0c1c2; margin-top: -8px; margin-bottom: 8px; }
+    .result { background: #1b263b; padding: 10px; border: 1px solid #415a77; max-width: 1000px; margin-bottom: 20px; }
     .warn { color: #ffba08; font-weight: bold; }
     .over { color: #ff4d6d; font-weight: bold; }
-    .export-btn a {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #00b4d8;
-      color: black;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 6px;
-    }
+    .export-btn a { display: inline-block; padding: 10px 20px; background: #00b4d8; color: black; text-decoration: none; font-weight: bold; border-radius: 6px; }
   </style>
 </head>
 <body>
   <?php include 'header.php'; ?>
-
   <h2>Zerspanungsrechner</h2>
 
   <div class="calculator-form">
     <label for="motorleistung">Motorleistung (Watt):</label>
     <input type="number" id="motorleistung" value="750" oninput="berechne()">
 
-    <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
+    <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
     <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
 
     <label for="material">Material:</label>
@@ -125,11 +97,11 @@
   </div>
 
   <div class="result" id="ausgabe"></div>
-  <div id="exportLink" class="export-btn" style="display:none;"><a href="export.php" target="_blank">📤 Ergebnis exportieren</a></div>
+  <div id="exportLink" class="export-btn" style="display:none;"><a id="exportBtn" href="#">📤 Ergebnis exportieren</a></div>
 
   <script>
     let materialien = [], platten = [];
-    const gruppenMap = { P: 'Stahl', M: 'Edelstahl', K: 'Gusseisen', N: 'NE-Metalle', S: 'Superlegierungen', H: 'gehärteter Stahl' };
+    const gruppenMap = { P:'Stahl', M:'Edelstahl', K:'Gusseisen', N:'NE-Metalle', S:'Superlegierungen', H:'gehärteter Stahl' };
 
     async function ladeDaten() {
       const res = await fetch('load.php');
@@ -150,52 +122,56 @@
       const ap = +document.getElementById('ap').value;
       const f = +document.getElementById('f').value;
       const b = 2 * ap;
-      const vcEmpf = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
-      let n = modus === 'vc'
-        ? (1000 * vcEmpf) / (Math.PI * d)
+      const vcEmpf = schn==='hss'?mat.vc_hss:mat.vc_hartmetall;
+      let n = modus==='vc'
+        ? (1000*vcEmpf)/(Math.PI*d)
         : +document.getElementById('n_manuell').value;
-      const vf = n * f;
+      const vf = n*f;
       const kc = mat.kc;
-      const Fc = kc * ap * b * 0.8;
-      const M = (Fc * (d / 2)) / 1000;
-      const PkW = (M * n) / 9550;
-      const P_W = PkW * 1000;
+      const Fc = kc*ap*b*0.8;
+      const M = (Fc*(d/2))/1000;
+      const PkW = (M*n)/9550;
+      const P_W = PkW*1000;
       const motorLeistung = +document.getElementById('motorleistung').value;
-      const lastPct = (P_W / motorLeistung) * 100;
-      let warnung = '';
-      if (lastPct >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${P_W.toFixed(0)} W = ${lastPct.toFixed(0)}% von ${motorLeistung} W)</div>`;
-      else if (lastPct >= 80) warnung = `<div class='warn'>⚠️ Leistungsgrenze erreicht (${P_W.toFixed(0)} W = ${lastPct.toFixed(0)}% von ${motorLeistung} W)</div>`;
+      const lastPct = (P_W/motorLeistung)*100;
+      let warnung='';
+      if(lastPct>=95) warnung=`<div class='over'>⚠️ Überlastung! (${P_W.toFixed(0)} W = ${lastPct.toFixed(0)}% von ${motorLeistung} W)</div>`;
+      else if(lastPct>=80) warnung=`<div class='warn'>⚠️ Leistungsgrenze erreicht (${P_W.toFixed(0)} W = ${lastPct.toFixed(0)}% von ${motorLeistung} W)</div>`;
       const plate = platten[+document.getElementById('schneidplatte').value];
-      const grpText = plate.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
+      const grpText = plate.gruppen.split(',').map(g=>gruppenMap[g]).join(', ');
       document.getElementById('ausgabe').innerHTML =
-        `<strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>` +
-        `<strong>Schnittgeschwindigkeit:</strong> ${vcEmpf.toFixed(1)} m/min<br>` +
-        `<strong>Drehzahl (Spindel):</strong> ${n.toFixed(0)} U/min<br>` +
-        `<strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min<br>` +
-        `<strong>Spanvolumen:</strong> ${(ap * f * vcEmpf / 1000).toFixed(2)} cm³/min<br>` +
-        `<strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>` +
-        `<strong>Drehmoment:</strong> ${M.toFixed(1)} Nm<br>` +
-        `<strong>Leistungsaufnahme (Spindel):</strong> ${PkW.toFixed(2)} kW<br>` +
-        `<strong>Motorlast:</strong> ${P_W.toFixed(0)} W (${lastPct.toFixed(0)}%)<br>` +
-        `<strong>Ausgewählte Schneidplatte:</strong> ${plate.name} – ${grpText}<br>` +
+        `<strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>`+
+        `<strong>Schnittgeschwindigkeit:</strong> ${vcEmpf.toFixed(1)} m/min<br>`+
+        `<strong>Spindeldrehzahl:</strong> ${n.toFixed(0)} U/min<br>`+
+        `<strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min<br>`+
+        `<strong>Spanvolumen:</strong> ${(ap*f*vcEmpf/1000).toFixed(2)} cm³/min<br>`+
+        `<strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>`+
+        `<strong>Drehmoment:</strong> ${M.toFixed(1)} Nm<br>`+
+        `<strong>Leistungsaufnahme (Spindel):</strong> ${PkW.toFixed(2)} kW<br>`+
+        `<strong>Motorlast:</strong> ${P_W.toFixed(0)} W (${lastPct.toFixed(0)}%)<br>`+
+        `<strong>Schneidplatte:</strong> ${plate.name} – ${grpText}<br>`+
         warnung;
-      document.getElementById('exportLink').style.display = 'block';
+      document.getElementById('exportLink').style.display='block';
+      // Speicherung für Export
+      fetch('session_export.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ material: mat, schn, modus, d, ap, f, b, n, vf, Fc, M, PkW, P_W, lastPct, plate })
+      });
+      document.getElementById('exportBtn').href = 'export.php';
     }
 
     function fuelleMaterialDropdown() {
-      const sel = document.getElementById('material'); sel.innerHTML = '';
-      materialien.forEach((m, i) => sel.innerHTML += `<option value='${i}'>${m.name} (${m.gruppe} – ${gruppenMap[m.gruppe]})</option>`);
+      const sel=document.getElementById('material'); sel.innerHTML='';
+      materialien.forEach((m,i)=>sel.innerHTML+=`<option value='${i}'>${m.name} (${m.gruppe} – ${gruppenMap[m.gruppe]})</option>`);
     }
-
     function fuellePlattenDropdown() {
-      const sel = document.getElementById('schneidplatte'); sel.innerHTML = '';
-      platten.forEach((p, i) => sel.innerHTML += `<option value='${i}'>${p.name} (${p.typ}) – für ${p.gruppen.split(',').map(g => gruppenMap[g]).join(', ')}</option>`);
+      const sel=document.getElementById('schneidplatte'); sel.innerHTML='';
+      platten.forEach((p,i)=>sel.innerHTML+=`<option value='${i}'>${p.name} (${p.typ}) – für ${p.gruppen.split(',').map(g=>gruppenMap[g]).join(', ')}</option>`);
     }
-
     function umschaltenModus() {
-      document.getElementById('drehzahlEingabe').style.display = document.getElementById('modus').value === 'n' ? 'block' : 'none';
+      document.getElementById('drehzahlEingabe').style.display = document.getElementById('modus').value==='n'?'block':'none';
     }
-
     window.onload = ladeDaten;
   </script>
 </body>

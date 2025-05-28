@@ -160,8 +160,8 @@ function berechne() {
   const q_mm3 = ap * f * n * Math.PI * d / 1000; // mm³/min
   const q = q_mm3 / 1000; // cm³/min
 
-  // KORREKTUR: Schnittkraft Fc = kc * ap * f * Umfang
-  const Fc = kc * ap * f * Math.PI * d / 1000; // N
+  // KORREKTUR: Schnittkraft Fc = kc * ap * f
+  const Fc = kc * ap * f; // N
 
   // Leistungsaufnahme (kW): P = (Fc * vc_berechnet) / 60000
   const leistung = (Fc * vc_berechnet) / 60000;

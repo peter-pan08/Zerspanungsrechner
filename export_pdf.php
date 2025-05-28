@@ -60,18 +60,21 @@ $pdf->Ln(5);
 $pdf->SetFont('helvetica', '', 12);
 $html = '<table cellpadding="4">';
 $labels = [
-    'Material'               => $data['material'] ?? '-',
-    'Schneidplatte'          => $data['platte'] ?? '-',
-    'vc (m/min)'             => $data['vc'] ?? '-',
-    'f (mm/U)'               => $data['f'] ?? '-',
-    'ap (mm)'                => $data['ap'] ?? '-',
-    'Durchmesser (mm)'       => $data['D'] ?? '-',
-    'Drehzahl (U/min)'       => $data['n'] ?? '-',
-    'Vorschubgeschwindigkeit' => $data['vf'] ?? '-',
-    'Leistungsaufnahme (kW)' => $data['pc'] ?? '-',
-    'Motorlast (W)'          => $data['motorLast'] ?? '-',
-    'Schnittkraft (N)'       => $data['Fc'] ?? '-',
-    'Drehmoment (Nm)'        => $data['md'] ?? '-'
+    'Material'                 => $data['material'] ?? '-',
+    'Schneidplatte'            => $data['platte'] ?? '-',
+    'vc (m/min)'               => $data['vc'] ?? '-',
+    'f (mm/U)'                 => $data['f'] ?? '-',
+    'ap (mm)'                  => $data['ap'] ?? '-',
+    'Durchmesser (mm)'         => $data['D'] ?? '-',
+    'Spindeldrehzahl'          => isset($data['n']) ? $data['n'] . ' U/min' : '-',
+    'Motordrehzahl'            => (isset($data['nMot']) && isset($data['untersetzung']))
+                                   ? $data['nMot'] . ' U/min (Untersetzung ' . $data['untersetzung'] . ')'
+                                   : (isset($data['nMot']) ? $data['nMot'] . ' U/min' : '-'),
+    'Vorschubgeschwindigkeit'  => isset($data['vf']) ? $data['vf'] . ' mm/min' : '-',
+    'Leistungsaufnahme (kW)'   => $data['pc'] ?? '-',
+    'Motorlast (W)'            => $data['motorLast'] ?? '-',
+    'Schnittkraft (N)'         => $data['Fc'] ?? '-',
+    'Drehmoment (Nm)'          => $data['md'] ?? '-'
 ];
 foreach ($labels as $label => $value) {
     $html .= '<tr><td width="40%"><strong>' . $label . '</strong></td><td>' . $value . '</td></tr>';

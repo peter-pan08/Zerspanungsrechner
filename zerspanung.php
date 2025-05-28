@@ -207,13 +207,14 @@ function berechne() {
       f,
       ap,
       D: d,
-      n: n.toFixed(0),
-      vf: vf.toFixed(0),
+      n: n.toFixed(0), // Spindeldrehzahl
+      nMot: nMot.toFixed(0), // Motordrehzahl
+      untersetzung: untersetzung, // Untersetzung
+      vf: vf.toFixed(0), // Vorschubgeschwindigkeit
       pc: leistung.toFixed(2), // Leistungsaufnahme (kW)
       motorLast: motorLast.toFixed(0), // Motorlast (W)
       Fc: Fc.toFixed(0), // Schnittkraft (N)
-      md: drehmoment.toFixed(1),
-      nMot: nMot.toFixed(0)
+      md: drehmoment.toFixed(1)
     })
   });
 }

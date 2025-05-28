@@ -30,6 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <input name="appuser" required>
     <label>App-Benutzerpasswort:</label>
     <input type="password" name="apppass" required>
+    <label>Demo-Modus:</label>
+    <select name="demo_mode">
+      <option value="false">Demo-Modus AUS</option>
+      <option value="true">Demo-Modus AN</option>
+    </select>
     <button type="submit">Installation starten</button>
   </form>
 </body>
@@ -42,6 +47,7 @@ $dbpass = $_POST['dbpass'];
 $dbname = $_POST['dbname'];
 $appuser = $_POST['appuser'];
 $apppass = $_POST['apppass'];
+$demo_mode = isset($_POST['demo_mode']) && $_POST['demo_mode'] === 'true' ? 'true' : 'false';
 
 $conn = new mysqli($dbhost, $dbuser, $dbpass);
 if ($conn->connect_error) {
@@ -89,6 +95,8 @@ $conn->query("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES (
 
 $config = <<<PHP
 <?php
+define('DEMO_MODE', $demo_mode);  // Demo-Modus aktiv: kein Löschen möglich
+
 \$host = '$dbhost';
 \$user = '$appuser';
 \$pass = '$apppass';

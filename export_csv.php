@@ -15,12 +15,18 @@ fputcsv($output, [
   'f (mm/U)',
   'ap (mm)',
   'Durchmesser (mm)',
-  'Drehzahl (U/min)',
+  'Spindeldrehzahl (U/min)',
+  'Motordrehzahl (U/min)',
+  'Untersetzung',
+  'Getriebewirkungsgrad',
   'Vorschubgeschwindigkeit (mm/min)',
   'Leistungsaufnahme (kW)',
   'Motorlast (W)',
   'Schnittkraft (N)',
-  'Drehmoment (Nm)'
+  'Drehmoment (Spindel, Nm)',
+  'Drehmoment (Motor, Nm)',
+  'Motordrehmoment (Nm)',
+  'Motordrehmoment-Auslastung (%)'
 ]);
 
 // Daten aus Session holen (Session-Schlüssel "export")
@@ -36,11 +42,17 @@ if (!empty($data)) {
     $data['ap']         ?? '',
     $data['D']          ?? '',
     $data['n']          ?? '',
+    $data['nMot']       ?? '',
+    $data['untersetzung'] ?? '',
+    $data['wirkungsgrad'] ?? '',
     $data['vf']         ?? '',
     $data['pc']         ?? '',
     $data['motorLast']  ?? '',
     $data['Fc']         ?? '',
-    $data['md']         ?? ''
+    $data['md_spindel'] ?? '',
+    $data['md_motor']   ?? '',
+    $data['motordrehmoment'] ?? '',
+    $data['drehmomentMotorProzent'] ?? ''
   ]);
 } else {
   fputcsv($output, ['⚠️ Keine Exportdaten gefunden.']);

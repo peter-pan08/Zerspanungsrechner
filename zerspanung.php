@@ -134,70 +134,78 @@ include 'header.php';
     }
 
     function berechne() {
-      if (!materialien.length) return;
-      const motorleistung = parseFloat(document.getElementById('motorleistung').value);
-      const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
-      const d = parseFloat(document.getElementById('durchmesser').value);
-      const ap = parseFloat(document.getElementById('ap').value);
-      const f = parseFloat(document.getElementById('f').value);
+  if (!materialien.length) return;
+  const motorleistung = parseFloat(document.getElementById('motorleistung').value);
+  const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
+  const d = parseFloat(document.getElementById('durchmesser').value);
+  const ap = parseFloat(document.getElementById('ap').value);
+  const f = parseFloat(document.getElementById('f').value);
 
-      const mat = materialien[parseInt(document.getElementById('material').value)];
-      const schn = document.getElementById('schneidstoff').value;
-      const vc = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
-      const kc = mat.kc;
+  const mat = materialien[parseInt(document.getElementById('material').value)];
+  const schn = document.getElementById('schneidstoff').value;
+  const vc = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
+  const kc = mat.kc;
 
-      let n;
-      if (document.getElementById('modus').value === 'vc') {
-        n = (1000 * vc) / (Math.PI * d);
-      } else {
-        n = parseFloat(document.getElementById('n_manuell').value);
-      }
+  let n;
+  if (document.getElementById('modus').value === 'vc') {
+    n = (1000 * vc) / (Math.PI * d);
+  } else {
+    n = parseFloat(document.getElementById('n_manuell').value);
+  }
 
-      const b = 2 * ap;
-      const vf = n * f;
-      const vc_berechnet = (Math.PI * d * n) / 1000;
-      const q = ap * f * vc_berechnet;
-      const leistung = q * 0.25;
-      const Fc = kc * ap * b * 0.8;
-      const drehmoment = (Fc * d/2) / 1000;
-      const leistungWatt = leistung * 1000;
-      const motorLast = leistungWatt / untersetzung;
-      const lastProzent = (motorLast / motorleistung) * 100;
-      const nMot = n * untersetzung;
+  // Korrigierte Berechnung
+  const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
+  const vf = n * f; // mm/min
 
-      let warnung = '';
-      if (lastProzent >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
-      else if (lastProzent >= 80) warnung = `<div class='warn'>⚠️ Leistungsgrenze erreicht (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
+  // Spanvolumen q in mm³/min und dann in cm³/min
+  const q_mm3 = ap * f * n * Math.PI * d / 1000; // mm³/min
+  const q = q_mm3 / 1000; // cm³/min
 
-      const platte = platten[parseInt(document.getElementById('schneidplatte').value)];
-      const gruppenText = platte.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
+  // Schnittkraft Fc = kc * ap * f
+  const Fc = kc * ap * f;
 
-      document.getElementById('ausgabe').innerHTML = `
-        <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>
-        <strong>Schnittgeschwindigkeit:</strong> ${vc_berechnet.toFixed(1)} m/min<br>
-        <strong>Spindeldrehzahl:</strong> ${n.toFixed(0)} U/min<br>
-        <strong>Motordrehzahl:</strong> ${nMot.toFixed(0)} U/min (Untersetzung ${untersetzung})<br>
-        <strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min<br>
-        <strong>Spanvolumen:</strong> ${q.toFixed(2)} cm³/min<br>
-        <strong>Leistungsaufnahme (Spindel):</strong> ${leistung.toFixed(2)} kW<br>
-        <strong>Motorlast:</strong> ${motorLast.toFixed(0)} W (${lastProzent.toFixed(0)}% von ${motorleistung} W)<br>
-        <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
-        <strong>Drehmoment:</strong> ${drehmoment.toFixed(1)} Nm<br><br>
-        <strong>Schneidplatte:</strong> ${platte.name} (${platte.typ}) – für ${gruppenText}, vc ${platte.vc} m/min
-        ${warnung}
-      `;
+  // Leistungsaufnahme (kW): P = (Fc * vc) / 60000
+  const leistung = (Fc * vc_berechnet) / 60000;
 
-      document.getElementById('ausgabe').style.display = 'block';
-      document.getElementById('exportLink').style.display = 'block';
+  const drehmoment = (Fc * d / 2) / 1000; // Nm
+  const leistungWatt = leistung * 1000;
+  const motorLast = leistungWatt / untersetzung;
+  const lastProzent = (motorLast / motorleistung) * 100;
+  const nMot = n * untersetzung;
 
-      fetch('session_export.php', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ material: mat.name, platte: platte.name, vc: vc_berechnet.toFixed(1), f, ap, D: d, n: n.toFixed(0), vf: vf.toFixed(0), pc: motorLast.toFixed(0), md: drehmoment.toFixed(1), nMot: nMot.toFixed(0) })
-      });
-    }
+  let warnung = '';
+  if (lastProzent >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
+  else if (lastProzent >= 80) warnung = `<div class='warn'>⚠️ Leistungsgrenze erreicht (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
 
-    function fuelleMaterialDropdown() {
+  const platte = platten[parseInt(document.getElementById('schneidplatte').value)];
+  const gruppenText = platte.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
+
+  document.getElementById('ausgabe').innerHTML = `
+    <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>
+    <strong>Schnittgeschwindigkeit:</strong> ${vc_berechnet.toFixed(1)} m/min<br>
+    <strong>Spindeldrehzahl:</strong> ${n.toFixed(0)} U/min<br>
+    <strong>Motordrehzahl:</strong> ${nMot.toFixed(0)} U/min (Untersetzung ${untersetzung})<br>
+    <strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min<br>
+    <strong>Spanvolumen:</strong> ${q.toFixed(2)} cm³/min<br>
+    <strong>Leistungsaufnahme (Spindel):</strong> ${leistung.toFixed(2)} kW<br>
+    <strong>Motorlast:</strong> ${motorLast.toFixed(0)} W (${lastProzent.toFixed(0)}% von ${motorleistung} W)<br>
+    <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
+    <strong>Drehmoment:</strong> ${drehmoment.toFixed(1)} Nm<br><br>
+    <strong>Schneidplatte:</strong> ${platte.name} (${platte.typ}) – für ${gruppenText}, vc ${platte.vc} m/min
+    ${warnung}
+  `;
+
+  document.getElementById('ausgabe').style.display = 'block';
+  document.getElementById('exportLink').style.display = 'block';
+
+  fetch('session_export.php', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ material: mat.name, platte: platte.name, vc: vc_berechnet.toFixed(1), f, ap, D: d, n: n.toFixed(0), vf: vf.toFixed(0), pc: motorLast.toFixed(0), md: drehmoment.toFixed(1), nMot: nMot.toFixed(0) })
+  });
+}
+
+  function fuelleMaterialDropdown() {
       const sel = document.getElementById('material'); sel.innerHTML = '';
       materialien.forEach((m, i) => sel.innerHTML += `<option value="${i}">${m.name} (${m.gruppe} – ${gruppenMap[m.gruppe]})</option>`);
     }

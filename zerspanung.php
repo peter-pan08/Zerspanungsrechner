@@ -106,6 +106,9 @@ include 'header.php';
   <label for="f">Vorschub f (mm/U):</label>
   <input type="number" id="f" step="0.01" value="0.15" oninput="berechne()">
 
+  <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
+  <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
+
   <!-- Ausgabe -->
   <div class="result" id="ausgabe"></div>
 
@@ -137,6 +140,7 @@ function berechne() {
   if (!materialien.length) return;
   const motorleistung = parseFloat(document.getElementById('motorleistung').value);
   const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
+  const wirkungsgrad = parseFloat(document.getElementById('wirkungsgrad').value) || 0.95;
   const d = parseFloat(document.getElementById('durchmesser').value);
   const ap = parseFloat(document.getElementById('ap').value);
   const f = parseFloat(document.getElementById('f').value);
@@ -160,17 +164,26 @@ function berechne() {
   const q_mm3 = ap * f * n * Math.PI * d / 1000; // mm³/min
   const q = q_mm3 / 1000; // cm³/min
 
-  // KORREKTUR: Schnittkraft Fc = kc * ap * f
+  // Schnittkraft Fc = kc * ap * f
   const Fc = kc * ap * f; // N
 
   // Leistungsaufnahme (kW): P = (Fc * vc_berechnet) / 60000
   const leistung = (Fc * vc_berechnet) / 60000;
-
-  const drehmoment = (Fc * d / 2) / 1000; // Nm
   const leistungWatt = leistung * 1000;
-  const motorLast = leistungWatt / untersetzung;
-  const lastProzent = (motorLast / motorleistung) * 100;
+
+  // Drehmoment an der Spindel
+  const drehmomentSpindel = (Fc * d / 2) / 1000; // Nm
+
+  // Motordrehzahl
   const nMot = n * untersetzung;
+
+  // Drehmoment am Motor
+  const drehmomentMotor = drehmomentSpindel / untersetzung / wirkungsgrad; // Nm
+
+  // Motorlast (mechanisch am Motor)
+  const motorLast = leistungWatt / wirkungsgrad;
+
+  const lastProzent = (motorLast / motorleistung) * 100;
 
   let warnung = '';
   if (lastProzent >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
@@ -187,9 +200,10 @@ function berechne() {
     <strong>Vorschubgeschwindigkeit:</strong> ${vf.toFixed(0)} mm/min<br>
     <strong>Spanvolumen:</strong> ${q.toFixed(2)} cm³/min<br>
     <strong>Leistungsaufnahme (Spindel):</strong> ${leistung.toFixed(2)} kW<br>
-    <strong>Motorlast:</strong> ${motorLast.toFixed(0)} W (${lastProzent.toFixed(0)}% von ${motorleistung} W)<br>
+    <strong>Motorlast:</strong> ${motorLast.toFixed(0)} W (${lastProzent.toFixed(0)}% von ${motorleistung} W, Wirkungsgrad ${wirkungsgrad})<br>
     <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
-    <strong>Drehmoment:</strong> ${drehmoment.toFixed(1)} Nm<br><br>
+    <strong>Drehmoment (Spindel):</strong> ${drehmomentSpindel.toFixed(1)} Nm<br>
+    <strong>Drehmoment (Motor):</strong> ${drehmomentMotor.toFixed(2)} Nm<br><br>
     <strong>Schneidplatte:</strong> ${platte.name} (${platte.typ}) – für ${gruppenText}, vc ${platte.vc} m/min
     ${warnung}
   `;
@@ -210,11 +224,13 @@ function berechne() {
       n: n.toFixed(0), // Spindeldrehzahl
       nMot: nMot.toFixed(0), // Motordrehzahl
       untersetzung: untersetzung, // Untersetzung
+      wirkungsgrad: wirkungsgrad, // Wirkungsgrad
       vf: vf.toFixed(0), // Vorschubgeschwindigkeit
       pc: leistung.toFixed(2), // Leistungsaufnahme (kW)
       motorLast: motorLast.toFixed(0), // Motorlast (W)
       Fc: Fc.toFixed(0), // Schnittkraft (N)
-      md: drehmoment.toFixed(1)
+      md_spindel: drehmomentSpindel.toFixed(1), // Drehmoment Spindel (Nm)
+      md_motor: drehmomentMotor.toFixed(2) // Drehmoment Motor (Nm)
     })
   });
 }

@@ -70,11 +70,13 @@ $labels = [
     'Motordrehzahl'            => (isset($data['nMot']) && isset($data['untersetzung']))
                                    ? $data['nMot'] . ' U/min (Untersetzung ' . $data['untersetzung'] . ')'
                                    : (isset($data['nMot']) ? $data['nMot'] . ' U/min' : '-'),
+    'Getriebewirkungsgrad'     => isset($data['wirkungsgrad']) ? $data['wirkungsgrad'] : '-',
     'Vorschubgeschwindigkeit'  => isset($data['vf']) ? $data['vf'] . ' mm/min' : '-',
     'Leistungsaufnahme (kW)'   => $data['pc'] ?? '-',
     'Motorlast (W)'            => $data['motorLast'] ?? '-',
     'Schnittkraft (N)'         => $data['Fc'] ?? '-',
-    'Drehmoment (Nm)'          => $data['md'] ?? '-'
+    'Drehmoment (Spindel, Nm)' => $data['md_spindel'] ?? '-',
+    'Drehmoment (Motor, Nm)'   => $data['md_motor'] ?? '-'
 ];
 foreach ($labels as $label => $value) {
     $html .= '<tr><td width="40%"><strong>' . $label . '</strong></td><td>' . $value . '</td></tr>';

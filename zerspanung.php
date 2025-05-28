@@ -71,6 +71,10 @@ include 'header.php';
   <label for="motorleistung">Motorleistung (Watt):</label>
   <input type="number" id="motorleistung" value="750" oninput="berechne()">
 
+  <!-- Nach dem Feld für Motorleistung -->
+  <label for="motordrehmoment">Motordrehmoment (Nm):</label>
+  <input type="number" id="motordrehmoment" step="0.01" min="0" value="2.4" oninput="berechne()">
+
   <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
   <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
 
@@ -184,10 +188,15 @@ function berechne() {
   const motorLast = leistungWatt / wirkungsgrad;
 
   const lastProzent = (motorLast / motorleistung) * 100;
+  const motordrehmoment = parseFloat(document.getElementById('motordrehmoment').value) || 2.4;
+  const drehmomentMotorProzent = (drehmomentMotor / motordrehmoment) * 100;
 
   let warnung = '';
-  if (lastProzent >= 95) warnung = `<div class='over'>⚠️ Überlastung! (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
-  else if (lastProzent >= 80) warnung = `<div class='warn'>⚠️ Leistungsgrenze erreicht (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W)</div>`;
+  if (lastProzent >= 95 || drehmomentMotorProzent >= 95) {
+    warnung = `<div class='over'>⚠️ Überlastung! (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W, Drehmoment ${drehmomentMotor.toFixed(2)} Nm = ${drehmomentMotorProzent.toFixed(0)}% von ${motordrehmoment} Nm)</div>`;
+  } else if (lastProzent >= 80 || drehmomentMotorProzent >= 80) {
+    warnung = `<div class='warn'>⚠️ Leistungs- oder Drehmomentgrenze erreicht (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W, Drehmoment ${drehmomentMotor.toFixed(2)} Nm = ${drehmomentMotorProzent.toFixed(0)}% von ${motordrehmoment} Nm)</div>`;
+  }
 
   const platte = platten[parseInt(document.getElementById('schneidplatte').value)];
   const gruppenText = platte.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
@@ -203,7 +212,7 @@ function berechne() {
     <strong>Motorlast:</strong> ${motorLast.toFixed(0)} W (${lastProzent.toFixed(0)}% von ${motorleistung} W, Wirkungsgrad ${wirkungsgrad})<br>
     <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
     <strong>Drehmoment (Spindel):</strong> ${drehmomentSpindel.toFixed(1)} Nm<br>
-    <strong>Drehmoment (Motor):</strong> ${drehmomentMotor.toFixed(2)} Nm<br><br>
+    <strong>Drehmoment (Motor):</strong> ${drehmomentMotor.toFixed(2)} Nm (${drehmomentMotorProzent.toFixed(0)}% von ${motordrehmoment} Nm)<br><br>
     <strong>Schneidplatte:</strong> ${platte.name} (${platte.typ}) – für ${gruppenText}, vc ${platte.vc} m/min
     ${warnung}
   `;
@@ -230,7 +239,9 @@ function berechne() {
       motorLast: motorLast.toFixed(0), // Motorlast (W)
       Fc: Fc.toFixed(0), // Schnittkraft (N)
       md_spindel: drehmomentSpindel.toFixed(1), // Drehmoment Spindel (Nm)
-      md_motor: drehmomentMotor.toFixed(2) // Drehmoment Motor (Nm)
+      md_motor: drehmomentMotor.toFixed(2), // Drehmoment Motor (Nm)
+      motordrehmoment: motordrehmoment, // Motordrehmoment (Nm)
+      drehmomentMotorProzent: drehmomentMotorProzent.toFixed(0), // Motordrehmoment-Auslastung (%)
     })
   });
 }

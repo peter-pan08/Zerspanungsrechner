@@ -76,7 +76,11 @@ $labels = [
     'Motorlast (W)'            => $data['motorLast'] ?? '-',
     'Schnittkraft (N)'         => $data['Fc'] ?? '-',
     'Drehmoment (Spindel, Nm)' => $data['md_spindel'] ?? '-',
-    'Drehmoment (Motor, Nm)'   => $data['md_motor'] ?? '-'
+    'Drehmoment (Motor, Nm)'   => $data['md_motor'] ?? '-',
+    'Motordrehmoment (Nm)'        => $data['motordrehmoment'] ?? '-',
+    'Motordrehmoment-Auslastung'  => isset($data['drehmomentMotorProzent']) && isset($data['motordrehmoment'])
+                                  ? $data['drehmomentMotorProzent'] . '% von ' . $data['motordrehmoment'] . ' Nm'
+                                  : '-'
 ];
 foreach ($labels as $label => $value) {
     $html .= '<tr><td width="40%"><strong>' . $label . '</strong></td><td>' . $value . '</td></tr>';

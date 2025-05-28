@@ -200,7 +200,21 @@ function berechne() {
   fetch('session_export.php', {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ material: mat.name, platte: platte.name, vc: vc_berechnet.toFixed(1), f, ap, D: d, n: n.toFixed(0), vf: vf.toFixed(0), pc: motorLast.toFixed(0), md: drehmoment.toFixed(1), nMot: nMot.toFixed(0) })
+    body: JSON.stringify({
+      material: mat.name,
+      platte: platte.name,
+      vc: vc_berechnet.toFixed(1),
+      f,
+      ap,
+      D: d,
+      n: n.toFixed(0),
+      vf: vf.toFixed(0),
+      pc: leistung.toFixed(2), // Leistungsaufnahme (kW)
+      motorLast: motorLast.toFixed(0), // Motorlast (W)
+      Fc: Fc.toFixed(0), // Schnittkraft (N)
+      md: drehmoment.toFixed(1),
+      nMot: nMot.toFixed(0)
+    })
   });
 }
 

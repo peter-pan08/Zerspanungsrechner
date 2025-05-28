@@ -133,7 +133,7 @@ include 'header.php';
         document.getElementById('modus').value === 'n' ? 'block' : 'none';
     }
 
-    function berechne() {
+function berechne() {
   if (!materialien.length) return;
   const motorleistung = parseFloat(document.getElementById('motorleistung').value);
   const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
@@ -153,7 +153,6 @@ include 'header.php';
     n = parseFloat(document.getElementById('n_manuell').value);
   }
 
-  // Korrigierte Berechnung
   const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
   const vf = n * f; // mm/min
 
@@ -161,10 +160,10 @@ include 'header.php';
   const q_mm3 = ap * f * n * Math.PI * d / 1000; // mm³/min
   const q = q_mm3 / 1000; // cm³/min
 
-  // Schnittkraft Fc = kc * ap * f
-  const Fc = kc * ap * f;
+  // KORREKTUR: Schnittkraft Fc = kc * ap * f * Umfang
+  const Fc = kc * ap * f * Math.PI * d / 1000; // N
 
-  // Leistungsaufnahme (kW): P = (Fc * vc) / 60000
+  // Leistungsaufnahme (kW): P = (Fc * vc_berechnet) / 60000
   const leistung = (Fc * vc_berechnet) / 60000;
 
   const drehmoment = (Fc * d / 2) / 1000; // Nm

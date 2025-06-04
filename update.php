@@ -12,13 +12,22 @@ if ($_SESSION['rolle'] !== 'admin') {
     button { padding: 10px; width: 100%; background: #00b4d8; border: none; color: black; font-weight: bold; margin-top: 10px; }
   </style>
   <h2>🔄 Update-System</h2>
-  <p>Hier könntest du später Tabellen aktualisieren, neue Felder hinzufügen usw.</p>
+  <p>Dieses Skript führt Datenbankaktualisierungen für bestehende Installationen aus.</p>
   <form method="post">
-    <button name="simulate" value="1">🚧 Simulation: Tabellenstruktur prüfen</button>
+    <button name="update" value="1">⚙️ Update ausführen</button>
   </form>
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  echo "<p>✅ (Simulation) Tabellenstruktur OK.</p>";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
+  require 'config.php';
+  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $res = $pdo->query("SHOW COLUMNS FROM fraeser LIKE 'durchmesser'");
+  if ($res->rowCount() === 0) {
+    $pdo->exec("ALTER TABLE fraeser ADD COLUMN durchmesser FLOAT");
+    echo '<p>Spalte <code>durchmesser</code> wurde hinzugefügt.</p>';
+  } else {
+    echo '<p>Spalte <code>durchmesser</code> ist bereits vorhanden.</p>';
+  }
 }
 ?>
 </body>

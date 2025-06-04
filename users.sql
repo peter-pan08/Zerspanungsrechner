@@ -20,6 +20,17 @@ CREATE TABLE IF NOT EXISTS platten (
   vc FLOAT
 );
 
+CREATE TABLE IF NOT EXISTS fraeser (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  typ VARCHAR(50),
+  durchmesser FLOAT,
+  zaehne INT,
+  gruppen VARCHAR(20),
+  vc FLOAT,
+  fz FLOAT
+);
+
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,

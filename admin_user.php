@@ -6,6 +6,55 @@ require 'session_check.php';
 if ($_SESSION['rolle'] !== 'admin') {
   die('Zugriff verweigert');
 }
+require 'config.php';
+
+$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$meldung = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (isset($_POST['neuer_benutzer'])) {
+    $hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
+    $stmt->execute([$_POST['username'], $hash, $_POST['rolle']]);
+    $meldung = "✅ Benutzer angelegt.";
+  } elseif (isset($_POST['edit_benutzer'])) {
+    if (!empty($_POST['password'])) {
+      $hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+      $stmt = $pdo->prepare("UPDATE users SET password_hash=?, rolle=? WHERE id=?");
+      $stmt->execute([$hash, $_POST['rolle'], $_POST['id']]);
+    } else {
+      $stmt = $pdo->prepare("UPDATE users SET rolle=? WHERE id=?");
+      $stmt->execute([$_POST['rolle'], $_POST['id']]);
+    }
+    $meldung = "✅ Benutzer aktualisiert.";
+  } elseif (isset($_POST['loeschen'])) {
+    if (defined('DEMO_MODE') && DEMO_MODE) {
+      $meldung = "🚫 Löschen im Demo-Modus nicht erlaubt.";
+    } else {
+      $stmt = $pdo->prepare("SELECT rolle FROM users WHERE id=?");
+      $stmt->execute([$_POST['id']]);
+      $targetRole = $stmt->fetchColumn();
+      if ($targetRole === 'admin') {
+        $cnt = $pdo->query("SELECT COUNT(*) FROM users WHERE rolle='admin'")->fetchColumn();
+        if ($cnt <= 1) {
+          $meldung = "❌ Letzter Admin kann nicht gelöscht werden.";
+        } else {
+          $del = $pdo->prepare("DELETE FROM users WHERE id=?");
+          $del->execute([$_POST['id']]);
+          $meldung = "✅ Benutzer gelöscht.";
+        }
+      } else {
+        $del = $pdo->prepare("DELETE FROM users WHERE id=?");
+        $del->execute([$_POST['id']]);
+        $meldung = "✅ Benutzer gelöscht.";
+      }
+    }
+  }
+}
+
+$nutzer = $pdo->query("SELECT id, username, rolle FROM users ORDER BY username")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }
@@ -15,9 +64,11 @@ if ($_SESSION['rolle'] !== 'admin') {
     th, td { padding: 10px; border: 1px solid #778da9; vertical-align: top; }
     .top-nav a { margin-right: 10px; color: #00b4d8; text-decoration: none; font-weight: bold; }
     h2 { margin-bottom: 10px; }
+    .info { margin-top: 10px; font-weight: bold; }
   </style>
 
   <h2>Benutzerverwaltung</h2>
+  <div class="info"><?= $meldung ?></div>
 
   <form method="post">
     <input type="text" name="username" placeholder="Benutzername" required>

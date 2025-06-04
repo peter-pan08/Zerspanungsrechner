@@ -15,6 +15,13 @@ if (isset($_POST['loeschen'])) {
   exit;
 }
 
+$durchmesser = $_POST['durchmesser'] ?? null;
+if ($durchmesser !== null && (!is_numeric($durchmesser) || $durchmesser <= 0)) {
+  http_response_code(400);
+  echo 'Ungültiger Durchmesser';
+  exit;
+}
+
 // INSERT oder UPDATE
 if (!empty($_POST['id'])) {
   // UPDATE

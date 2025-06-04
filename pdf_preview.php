@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
 <body>
   <div class="top-nav">
     <a href="index.php">🏠 Startseite</a>
-    <a href="zerspanung.html">🧮 Zerspanung</a>
-    <a href="admin.html">⚙️ Admin</a>
+    <a href="zerspanung.php">🧮 Zerspanung</a>
+    <a href="admin.php">⚙️ Admin</a>
     <a href="admin_user.php">👥 Benutzer</a>
     <a href="profil.php">👤 Profil</a>
     <a href="register.php">📝 Registrieren</a>
@@ -91,7 +91,7 @@ if (isset($_POST['save']) && !empty($_POST['werkstoff'])) {
   ]);
 
   echo "<p style='color:lightgreen;font-weight:bold;'>✅ Werte wurden in die Datenbank gespeichert.</p>";
-echo "<p><a href='pdf_preview.php' style='color:#00b4d8;font-weight:bold;'>🔁 Neues PDF hochladen</a> | <a href='admin.html' style='color:#00b4d8;font-weight:bold;'>🏁 Zurück zur Übersicht</a></p>";
+echo "<p><a href='pdf_preview.php' style='color:#00b4d8;font-weight:bold;'>🔁 Neues PDF hochladen</a> | <a href='admin.php' style='color:#00b4d8;font-weight:bold;'>🏁 Zurück zur Übersicht</a></p>";
 }
  ?>
   <h3>📋 Vorschau erkannter Werte:</h3>

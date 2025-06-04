@@ -1,6 +1,14 @@
 <?php
   define('REQUIRE_SESSION', true);
   $pageTitle = 'PDF-Upload';
+  $pageHeadExtra = <<<'HTML'
+<style>
+    body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; background: #415a77; color: white; border: 1px solid #778da9; }
+    button { background: #00b4d8; color: black; font-weight: bold; }
+    .top-nav a { margin-right: 10px; color: #00b4d8; text-decoration: none; font-weight: bold; }
+</style>
+HTML;
   include 'header.php';
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
   $file = $_FILES['pdf']['tmp_name'];
@@ -19,17 +27,6 @@
       $pdf = $parser->parseFile($dest);
       $text = $pdf->getText();
       echo "<h3>📄 Ausgelesener Text:</h3><pre style='white-space:pre-wrap;background:#1b263b;padding:10px;border-radius:8px;color:#e0e1dd;'>" . htmlspecialchars($text) . "</pre>";
-    } else {
-      echo "<p style='color:orange'>⚠️ PDF-Parser nicht installiert. Bitte zuerst <code>composer require smalot/pdfparser</code> ausführen.</p>";
-    }
-  } else {
-    echo "<p style='color:red'>❌ Fehler beim Hochladen der Datei.</p>";
-  }
-}
-?>
-<style>
-    body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }
-    input, button { width: 100%; padding: 10px; margin: 10px 0; background: #415a77; color: white; border: 1px solid #778da9; }
     button { background: #00b4d8; color: black; font-weight: bold; }
     .top-nav a { margin-right: 10px; color: #00b4d8; text-decoration: none; font-weight: bold; }
   </style>

@@ -1,9 +1,9 @@
-<?php require 'session_check.php';
+<?php
+require 'session_check.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-include 'header.php';
- ?>
+$pageHeadExtra = <<<'HTML'
 <style>
     body {
       font-family: sans-serif;
@@ -57,6 +57,9 @@ include 'header.php';
     .top-nav a:hover { text-decoration: underline; }
     h2 { color: #e0e1dd; }
   </style>
+HTML;
+include 'header.php';
+?>
 
   <h2>Zerspanungsrechner</h2>
 

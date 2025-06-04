@@ -1,16 +1,10 @@
-<?php require 'session_check.php';
+<?php
+require 'session_check.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-include 'header.php';
- ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Fräsrechner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+$pageHeadExtra = <<<'HTML'
+<style>
     body {
       font-family: sans-serif;
       margin: 20px;
@@ -62,69 +56,8 @@ include 'header.php';
     }
     .top-nav a:hover { text-decoration: underline; }
     h2 { color: #e0e1dd; }
-  </style>
-</head>
-<body>
-
-  <h2>Fräsrechner</h2>
-
-  <label for="motorleistung">Motorleistung (Watt):</label>
-  <input type="number" id="motorleistung" value="750" oninput="berechne()">
-
-  <!-- Nach dem Feld für Motorleistung -->
-  <label for="motordrehmoment">Motordrehmoment (Nm):</label>
-  <input type="number" id="motordrehmoment" step="0.01" min="0" value="2.4" oninput="berechne()">
-
-  <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
-  <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
-
-  <label for="material">Material:</label>
-  <select id="material" onchange="berechne()"></select>
-
-  <label for="schneidstoff">Schneidstoff:</label>
-  <select id="schneidstoff" onchange="berechne()">
-    <option value="hss">HSS</option>
-    <option value="hartmetall" selected>Hartmetall</option>
-  </select>
-
-  <label for="fraeser">Fräser:</label>
-  <select id="fraeser" onchange="berechne()"></select>
-
-  <label for="modus">Modus:</label>
-  <select id="modus" onchange="umschaltenModus(); berechne();">
-    <option value="vc" selected>Konstante Schnittgeschwindigkeit</option>
-    <option value="n">Konstante Drehzahl</option>
-  </select>
-
-  <label for="durchmesser">Werkstückdurchmesser (mm):</label>
-  <input type="number" id="durchmesser" value="100" oninput="berechne()">
-
-  <div id="drehzahlEingabe" style="display:none;">
-    <label for="n_manuell">Drehzahl n (1/min):</label>
-    <input type="number" id="n_manuell" value="300" oninput="berechne()">
-  </div>
-
-  <label for="ap">Zustellung ap (mm):</label>
-  <input type="number" id="ap" step="0.01" value="2" oninput="berechne()">
-
-  <label for="ae">Seitliche Zustellung ae (mm):</label>
-  <input type="number" id="ae" step="0.01" value="5" oninput="berechne()">
-
-  <label for="fz">Vorschub fz (mm/Zahn):</label>
-  <input type="number" id="fz" step="0.01" value="0.05" oninput="berechne()">
-
-  <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
-  <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
-
-  <!-- Ausgabe -->
-  <div class="result" id="ausgabe"></div>
-
-  <!-- Export-Button -->
-  <div id="exportLink" style="display:none; margin-top:20px;">
-    <a href="export.php" target="_blank" style="background:#00b4d8; color:black; padding:10px 20px; text-decoration:none; font-weight:bold; border-radius:6px;">📤 Ergebnis exportieren</a>
-  </div>
-
-  <script>
+</style>
+<script>
     let materialien = [], fraeser = [];
     const gruppenMap = { P:"Stahl", M:"Edelstahl", K:"Gusseisen", N:"NE-Metalle", S:"Superlegierungen", H:"gehärteter Stahl" };
 
@@ -264,5 +197,67 @@ function berechne() {
 
     window.onload = ladeDaten;
   </script>
+HTML;
+include 'header.php';
+?>
+
+  <h2>Fräsrechner</h2>
+
+  <label for="motorleistung">Motorleistung (Watt):</label>
+  <input type="number" id="motorleistung" value="750" oninput="berechne()">
+
+  <!-- Nach dem Feld für Motorleistung -->
+  <label for="motordrehmoment">Motordrehmoment (Nm):</label>
+  <input type="number" id="motordrehmoment" step="0.01" min="0" value="2.4" oninput="berechne()">
+
+  <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
+  <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
+
+  <label for="material">Material:</label>
+  <select id="material" onchange="berechne()"></select>
+
+  <label for="schneidstoff">Schneidstoff:</label>
+  <select id="schneidstoff" onchange="berechne()">
+    <option value="hss">HSS</option>
+    <option value="hartmetall" selected>Hartmetall</option>
+  </select>
+
+  <label for="fraeser">Fräser:</label>
+  <select id="fraeser" onchange="berechne()"></select>
+
+  <label for="modus">Modus:</label>
+  <select id="modus" onchange="umschaltenModus(); berechne();">
+    <option value="vc" selected>Konstante Schnittgeschwindigkeit</option>
+    <option value="n">Konstante Drehzahl</option>
+  </select>
+
+  <label for="durchmesser">Werkstückdurchmesser (mm):</label>
+  <input type="number" id="durchmesser" value="100" oninput="berechne()">
+
+  <div id="drehzahlEingabe" style="display:none;">
+    <label for="n_manuell">Drehzahl n (1/min):</label>
+    <input type="number" id="n_manuell" value="300" oninput="berechne()">
+  </div>
+
+  <label for="ap">Zustellung ap (mm):</label>
+  <input type="number" id="ap" step="0.01" value="2" oninput="berechne()">
+
+  <label for="ae">Seitliche Zustellung ae (mm):</label>
+  <input type="number" id="ae" step="0.01" value="5" oninput="berechne()">
+
+  <label for="fz">Vorschub fz (mm/Zahn):</label>
+  <input type="number" id="fz" step="0.01" value="0.05" oninput="berechne()">
+
+  <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
+  <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
+
+  <!-- Ausgabe -->
+  <div class="result" id="ausgabe"></div>
+
+  <!-- Export-Button -->
+  <div id="exportLink" style="display:none; margin-top:20px;">
+    <a href="export.php" target="_blank" style="background:#00b4d8; color:black; padding:10px 20px; text-decoration:none; font-weight:bold; border-radius:6px;">📤 Ergebnis exportieren</a>
+  </div>
+
 </body>
 </html>

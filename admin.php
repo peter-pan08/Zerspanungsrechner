@@ -1,12 +1,7 @@
 <?php
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Admin: Material- und Schneidplatten-Datenbank';
-  include 'header.php';
-require 'session_check.php';
-if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
-  die('Zugriff verweigert');
-}
-?>
+  $pageHeadExtra = <<<'HTML'
 <style>
     body {
       font-family: sans-serif;
@@ -61,79 +56,8 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
     h1, h2 {
       color: #e0e1dd;
     }
-  </style>
-
-  <h1>Adminbereich: Material- und Schneidplattenverwaltung</h1>
-
-  <h2>Materialien verwalten</h2>
-  <form id="materialForm">
-    <input type="hidden" id="mat_id">
-    <input type="text" placeholder="Materialname" id="mat_name">
-    <input type="text" placeholder="Typ" id="mat_typ">
-    <select id="mat_gruppe">
-      <option value="P">P – Stahl</option>
-      <option value="M">M – Edelstahl</option>
-      <option value="K">K – Gusseisen</option>
-      <option value="N">N – NE-Metalle</option>
-      <option value="S">S – Superlegierungen</option>
-      <option value="H">H – gehärteter Stahl</option>
-    </select>
-    <input type="number" placeholder="vc HSS" id="mat_vc_hss">
-    <input type="number" placeholder="vc Hartmetall" id="mat_vc_hm">
-    <input type="number" placeholder="kc (N/mm²)" id="mat_kc">
-    <button type="button" onclick="saveMaterial()">Speichern</button>
-  </form>
-  <table id="materialTable">
-    <thead><tr><th>Name</th><th>Typ</th><th>Gruppe</th><th>vc HSS</th><th>vc HM</th><th>kc</th><th>Aktion</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Schneidplatten verwalten</h2>
-  <form id="platteForm">
-    <input type="hidden" id="platt_id">
-    <input type="text" placeholder="Bezeichnung (z.B. VCMT110304)" id="platt_name">
-    <input type="text" placeholder="ISO-Typ (z.B. VCMT)" id="platt_typ">
-    <input type="text" placeholder="Materialeinsatz" id="platt_mat">
-    <input type="number" placeholder="Empf. vc" id="platt_vc">
-    <div class="checkboxes">
-      <label><input type="checkbox" value="P"> P</label>
-      <label><input type="checkbox" value="M"> M</label>
-      <label><input type="checkbox" value="K"> K</label>
-      <label><input type="checkbox" value="N"> N</label>
-      <label><input type="checkbox" value="S"> S</label>
-      <label><input type="checkbox" value="H"> H</label>
-    </div>
-    <button type="button" onclick="savePlatte()">Speichern</button>
-  </form>
-  <table id="plattenTable">
-    <thead><tr><th>Bezeichnung</th><th>ISO-Typ</th><th>Einsatz</th><th>vc</th><th>Gruppen</th><th>Aktion</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Fräser verwalten</h2>
-  <form id="fraeserForm">
-    <input type="hidden" id="frae_id">
-    <input type="text" placeholder="Bezeichnung" id="frae_name">
-    <input type="text" placeholder="Typ" id="frae_typ">
-    <input type="number" placeholder="Zähne" id="frae_z">
-    <input type="number" placeholder="Empf. vc" id="frae_vc">
-    <input type="number" placeholder="Empf. fz" id="frae_fz" step="0.01">
-    <div class="checkboxes">
-      <label><input type="checkbox" value="P"> P</label>
-      <label><input type="checkbox" value="M"> M</label>
-      <label><input type="checkbox" value="K"> K</label>
-      <label><input type="checkbox" value="N"> N</label>
-      <label><input type="checkbox" value="S"> S</label>
-      <label><input type="checkbox" value="H"> H</label>
-    </div>
-    <button type="button" onclick="saveFraeser()">Speichern</button>
-  </form>
-  <table id="fraeserTable">
-    <thead><tr><th>Name</th><th>Typ</th><th>Zähne</th><th>vc</th><th>fz</th><th>Gruppen</th><th>Aktion</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
-  <script>
+</style>
+<script>
     let materialEditId = null;
     let plattenEditId = null;
     let fraeserEditId = null;
@@ -272,5 +196,82 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
 
     window.onload = loadData;
   </script>
+HTML;
+  include 'header.php';
+require 'session_check.php';
+if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
+  die('Zugriff verweigert');
+}
+  </style>
+
+  <h1>Adminbereich: Material- und Schneidplattenverwaltung</h1>
+
+  <h2>Materialien verwalten</h2>
+  <form id="materialForm">
+    <input type="hidden" id="mat_id">
+    <input type="text" placeholder="Materialname" id="mat_name">
+    <input type="text" placeholder="Typ" id="mat_typ">
+    <select id="mat_gruppe">
+      <option value="P">P – Stahl</option>
+      <option value="M">M – Edelstahl</option>
+      <option value="K">K – Gusseisen</option>
+      <option value="N">N – NE-Metalle</option>
+      <option value="S">S – Superlegierungen</option>
+      <option value="H">H – gehärteter Stahl</option>
+    </select>
+    <input type="number" placeholder="vc HSS" id="mat_vc_hss">
+    <input type="number" placeholder="vc Hartmetall" id="mat_vc_hm">
+    <input type="number" placeholder="kc (N/mm²)" id="mat_kc">
+    <button type="button" onclick="saveMaterial()">Speichern</button>
+  </form>
+  <table id="materialTable">
+    <thead><tr><th>Name</th><th>Typ</th><th>Gruppe</th><th>vc HSS</th><th>vc HM</th><th>kc</th><th>Aktion</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Schneidplatten verwalten</h2>
+  <form id="platteForm">
+    <input type="hidden" id="platt_id">
+    <input type="text" placeholder="Bezeichnung (z.B. VCMT110304)" id="platt_name">
+    <input type="text" placeholder="ISO-Typ (z.B. VCMT)" id="platt_typ">
+    <input type="text" placeholder="Materialeinsatz" id="platt_mat">
+    <input type="number" placeholder="Empf. vc" id="platt_vc">
+    <div class="checkboxes">
+      <label><input type="checkbox" value="P"> P</label>
+      <label><input type="checkbox" value="M"> M</label>
+      <label><input type="checkbox" value="K"> K</label>
+      <label><input type="checkbox" value="N"> N</label>
+      <label><input type="checkbox" value="S"> S</label>
+      <label><input type="checkbox" value="H"> H</label>
+    </div>
+    <button type="button" onclick="savePlatte()">Speichern</button>
+  </form>
+  <table id="plattenTable">
+    <thead><tr><th>Bezeichnung</th><th>ISO-Typ</th><th>Einsatz</th><th>vc</th><th>Gruppen</th><th>Aktion</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Fräser verwalten</h2>
+  <form id="fraeserForm">
+    <input type="hidden" id="frae_id">
+    <input type="text" placeholder="Bezeichnung" id="frae_name">
+    <input type="text" placeholder="Typ" id="frae_typ">
+    <input type="number" placeholder="Zähne" id="frae_z">
+    <input type="number" placeholder="Empf. vc" id="frae_vc">
+    <input type="number" placeholder="Empf. fz" id="frae_fz" step="0.01">
+    <div class="checkboxes">
+      <label><input type="checkbox" value="P"> P</label>
+      <label><input type="checkbox" value="M"> M</label>
+      <label><input type="checkbox" value="K"> K</label>
+      <label><input type="checkbox" value="N"> N</label>
+      <label><input type="checkbox" value="S"> S</label>
+      <label><input type="checkbox" value="H"> H</label>
+    </div>
+    <button type="button" onclick="saveFraeser()">Speichern</button>
+  </form>
+  <table id="fraeserTable">
+    <thead><tr><th>Name</th><th>Typ</th><th>Zähne</th><th>vc</th><th>fz</th><th>Gruppen</th><th>Aktion</th></tr></thead>
+    <tbody></tbody>
+  </table>
 </body>
 </html>

@@ -38,6 +38,7 @@
       text-decoration: underline;
     }
   </style>
+  <?php if (!empty($pageHeadExtra)) echo $pageHeadExtra; ?>
 </head>
 <body>
   <div class="top-nav">

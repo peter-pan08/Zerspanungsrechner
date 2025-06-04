@@ -1,14 +1,7 @@
 <?php
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Benutzerverwaltung';
-  include 'header.php';
-  require 'session_check.php';
-  require 'config.php';
-  if ($_SESSION['rolle'] !== 'admin') {
-      header('Location: index.php');
-      exit;
-  }
-?>
+  $pageHeadExtra = <<<'HTML'
 <style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }
     input, select { padding: 6px; width: 100%; margin-bottom: 10px; background: #415a77; color: white; border: 1px solid #778da9; }
@@ -17,9 +10,16 @@
     th, td { padding: 10px; border: 1px solid #778da9; vertical-align: top; }
     .top-nav a { margin-right: 10px; color: #00b4d8; text-decoration: none; font-weight: bold; }
     h2 { margin-bottom: 10px; }
-  </style>
-
-  <h2>Benutzerverwaltung</h2>
+</style>
+HTML;
+  include 'header.php';
+  require 'session_check.php';
+  require 'config.php';
+  if ($_SESSION['rolle'] !== 'admin') {
+      header('Location: index.php');
+      exit;
+  }
+?>
 
   <form method="post">
     <input type="text" name="username" placeholder="Benutzername" required>

@@ -1,8 +1,7 @@
 <?php
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Datenexport';
-  include 'header.php';
-?>
+  $pageHeadExtra = <<<'HTML'
 <style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; text-align: center; padding-top: 50px; }
     h2 { margin-bottom: 30px; }
@@ -27,6 +26,9 @@
       font-weight: bold;
     }
   </style>
+HTML;
+  include 'header.php';
+?>
 
   <h2>📤 Ergebnisdaten exportieren</h2>
   <p>Wähle ein Format:</p>

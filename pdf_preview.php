@@ -22,17 +22,55 @@ function extract_data($text) {
 }
 
 $extracted = null;
+$save_success = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
-  $file = $_FILES['pdf']['tmp_name'];
-  $dest = __DIR__ . '/uploads/' . basename($_FILES['pdf']['name']);
-  if (!file_exists(__DIR__ . '/uploads')) mkdir(__DIR__ . '/uploads', 0777, true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (isset($_POST['save'])) {
+    if (!empty($_POST['werkstoff'])) {
+      require 'config.php';
+      $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  if (move_uploaded_file($file, $dest)) {
-    $parser = new \Smalot\PdfParser\Parser();
-    $pdf = $parser->parseFile($dest);
-    $text = $pdf->getText();
-    $extracted = extract_data($text);
+      $stmt1 = $pdo->prepare("INSERT INTO materialien (name, gruppe, vc_hartmetall, kc) VALUES (?, ?, ?, ?)");
+      $stmt1->execute([
+        $_POST['werkstoff'],
+        strtoupper(substr($_POST['werkstoff'], 0, 1)),
+        $_POST['vc'],
+        round($_POST['leistung'] * 60000 / ($_POST['vc'] ?: 1))
+      ]);
+
+      $stmt2 = $pdo->prepare("INSERT INTO platten (name, typ, gruppen, vc) VALUES (?, ?, ?, ?)");
+      $stmt2->execute([
+        $_POST['platte'],
+        $_POST['platte'],
+        strtoupper(substr($_POST['werkstoff'], 0, 1)),
+        $_POST['vc']
+      ]);
+
+      $save_success = true;
+    }
+
+    $extracted = [
+      'werkstoff'  => $_POST['werkstoff'] ?? '',
+      'vc'         => $_POST['vc'] ?? '',
+      'vorschub'   => $_POST['vorschub'] ?? '',
+      'leistung'   => $_POST['leistung'] ?? '',
+      'drehmoment' => $_POST['drehmoment'] ?? '',
+      'platte'     => $_POST['platte'] ?? ''
+    ];
+  } elseif (isset($_FILES['pdf'])) {
+    $file = $_FILES['pdf']['tmp_name'];
+    $dest = __DIR__ . '/uploads/' . basename($_FILES['pdf']['name']);
+    if (!file_exists(__DIR__ . '/uploads')) {
+      mkdir(__DIR__ . '/uploads', 0777, true);
+    }
+
+    if (move_uploaded_file($file, $dest)) {
+      $parser = new \Smalot\PdfParser\Parser();
+      $pdf = $parser->parseFile($dest);
+      $text = $pdf->getText();
+      $extracted = extract_data($text);
+    }
   }
 }
 ?>
@@ -65,35 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
     <label>PDF-Datei hochladen:</label>
     <input type="file" name="pdf" accept="application/pdf" required>
     <button type="submit">📤 Hochladen & Auslesen</button>
-  <button type="submit" name="save">💾 Speichern</button></form>
+  </form>
+
+  <?php if ($save_success): ?>
+    <p style='color:lightgreen;font-weight:bold;'>✅ Werte wurden in die Datenbank gespeichert.</p>
+    <p><a href='pdf_preview.php' style='color:#00b4d8;font-weight:bold;'>🔁 Neues PDF hochladen</a> | <a href='admin.html' style='color:#00b4d8;font-weight:bold;'>🏁 Zurück zur Übersicht</a></p>
+  <?php endif; ?>
 
   <?php if ($extracted): ?>
-<?php $save_success = false; 
-if (isset($_POST['save']) && !empty($_POST['werkstoff'])) {
-  require 'config.php';
-  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-  $stmt1 = $pdo->prepare("INSERT INTO materialien (name, gruppe, vc_hartmetall, kc) VALUES (?, ?, ?, ?)");
-  $stmt1->execute([
-    $_POST['werkstoff'],
-    strtoupper(substr($_POST['werkstoff'], 0, 1)),
-    $_POST['vc'],
-    round($_POST['leistung'] * 60000 / ($_POST['vc'] ?: 1))  // grobe kc-Schätzung
-  ]);
-
-  $stmt2 = $pdo->prepare("INSERT INTO platten (name, typ, gruppen, vc) VALUES (?, ?, ?, ?)");
-  $stmt2->execute([
-    $_POST['platte'],
-    $_POST['platte'],
-    strtoupper(substr($_POST['werkstoff'], 0, 1)),
-    $_POST['vc']
-  ]);
-
-  echo "<p style='color:lightgreen;font-weight:bold;'>✅ Werte wurden in die Datenbank gespeichert.</p>";
-echo "<p><a href='pdf_preview.php' style='color:#00b4d8;font-weight:bold;'>🔁 Neues PDF hochladen</a> | <a href='admin.html' style='color:#00b4d8;font-weight:bold;'>🏁 Zurück zur Übersicht</a></p>";
-}
- ?>
   <h3>📋 Vorschau erkannter Werte:</h3>
   <form method="post">
     <label>Werkstoff:</label>
@@ -108,7 +125,8 @@ echo "<p><a href='pdf_preview.php' style='color:#00b4d8;font-weight:bold;'>🔁 
     <input name="drehmoment" value="<?= htmlspecialchars($extracted['drehmoment']) ?>">
     <label>Plattentyp:</label>
     <input name="platte" value="<?= htmlspecialchars($extracted['platte']) ?>">
-  <button type="submit" name="save">💾 Speichern</button></form>
+    <button type="submit" name="save">💾 Speichern</button>
+  </form>
   <?php endif; ?>
 </body>
 </html>

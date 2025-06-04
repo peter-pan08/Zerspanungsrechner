@@ -81,12 +81,6 @@ include 'header.php';
   <label for="material">Material:</label>
   <select id="material" onchange="berechne()"></select>
 
-  <label for="schneidstoff">Schneidstoff:</label>
-  <select id="schneidstoff" onchange="berechne()">
-    <option value="hss">HSS</option>
-    <option value="hartmetall" selected>Hartmetall</option>
-  </select>
-
   <label for="fraeser">Fräser:</label>
   <select id="fraeser" onchange="berechne()"></select>
 
@@ -95,10 +89,6 @@ include 'header.php';
     <option value="vc" selected>Konstante Schnittgeschwindigkeit</option>
     <option value="n">Konstante Drehzahl</option>
   </select>
-
-  <label for="durchmesser">Werkstückdurchmesser (mm):</label>
-  <input type="number" id="durchmesser" value="100" oninput="berechne()">
-
   <div id="drehzahlEingabe" style="display:none;">
     <label for="n_manuell">Drehzahl n (1/min):</label>
     <input type="number" id="n_manuell" value="300" oninput="berechne()">
@@ -110,8 +100,21 @@ include 'header.php';
   <label for="ae">Seitliche Zustellung ae (mm):</label>
   <input type="number" id="ae" step="0.01" value="5" oninput="berechne()">
 
-  <label for="fz">Vorschub fz (mm/Zahn):</label>
-  <input type="number" id="fz" step="0.01" value="0.05" oninput="berechne()">
+  <label for="feedmode">Vorschub-Modus:</label>
+  <select id="feedmode" onchange="umschaltenFeed(); berechne();">
+    <option value="fz" selected>Vorschub pro Zahn</option>
+    <option value="vf">Vorschubgeschwindigkeit (mm/min)</option>
+  </select>
+
+  <div id="fzEingabe">
+    <label for="fz">Vorschub fz (mm/Zahn):</label>
+    <input type="number" id="fz" step="0.01" value="0.05" oninput="berechne()">
+  </div>
+
+  <div id="vfEingabe" style="display:none;">
+    <label for="vf">Vorschubgeschwindigkeit vf (mm/min):</label>
+    <input type="number" id="vf" step="1" value="500" oninput="berechne()">
+  </div>
 
   <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
   <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
@@ -143,19 +146,28 @@ include 'header.php';
         document.getElementById('modus').value === 'n' ? 'block' : 'none';
     }
 
+    function umschaltenFeed() {
+      const mode = document.getElementById('feedmode').value;
+      document.getElementById('fzEingabe').style.display = mode === 'fz' ? 'block' : 'none';
+      document.getElementById('vfEingabe').style.display = mode === 'vf' ? 'block' : 'none';
+    }
+
 function berechne() {
-  if (!materialien.length) return;
+  if (!materialien.length || !fraeser.length) return;
   const motorleistung = parseFloat(document.getElementById('motorleistung').value);
   const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
   const wirkungsgrad = parseFloat(document.getElementById('wirkungsgrad').value) || 0.95;
-  const d = parseFloat(document.getElementById('durchmesser').value);
+  const tool = fraeser[parseInt(document.getElementById('fraeser').value)];
+  const d = parseFloat(tool.durchmesser);
+  const z = tool.zaehne || 1;
   const ap = parseFloat(document.getElementById('ap').value);
   const ae = parseFloat(document.getElementById('ae').value);
-  const fz = parseFloat(document.getElementById('fz').value);
+  const feedMode = document.getElementById('feedmode').value;
+  let fz = parseFloat(document.getElementById('fz').value);
+  let vf = parseFloat(document.getElementById('vf').value);
 
   const mat = materialien[parseInt(document.getElementById('material').value)];
-  const schn = document.getElementById('schneidstoff').value;
-  const vc = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
+  const vc = tool.vc || mat.vc_hartmetall;
   const kc = mat.kc;
 
   let n;
@@ -166,9 +178,12 @@ function berechne() {
   }
 
   const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
-  const tool = fraeser[parseInt(document.getElementById('fraeser').value)];
-  const z = tool.zaehne || 1;
-  const vf = n * z * fz; // mm/min
+
+  if (feedMode === 'fz') {
+    vf = n * z * fz;
+  } else {
+    fz = vf / (n * z);
+  }
 
   // Spanvolumen q in mm³/min und dann in cm³/min
   const q_mm3 = ap * ae * vf; // mm³/min
@@ -218,7 +233,7 @@ function berechne() {
     <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
     <strong>Drehmoment (Spindel):</strong> ${drehmomentSpindel.toFixed(1)} Nm<br>
     <strong>Drehmoment (Motor):</strong> ${drehmomentMotor.toFixed(2)} Nm (${drehmomentMotorProzent.toFixed(0)}% von ${motordrehmoment} Nm)<br><br>
-    <strong>Fräser:</strong> ${tool.name} (${tool.typ}) – für ${gruppenText}, vc ${tool.vc} m/min
+    <strong>Fräser:</strong> ${tool.name} (${tool.typ}, Ø ${d} mm) – für ${gruppenText}, vc ${tool.vc} m/min
     ${warnung}
   `;
 

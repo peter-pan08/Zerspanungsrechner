@@ -18,11 +18,12 @@ if (isset($_POST['loeschen'])) {
 // INSERT oder UPDATE
 if (!empty($_POST['id'])) {
   // UPDATE
-  $stmt = $pdo->prepare("UPDATE fraeser SET name=?, typ=?, zaehne=?, gruppen=?, vc=?, fz=? WHERE id=?");
+  $stmt = $pdo->prepare("UPDATE fraeser SET name=?, typ=?, zaehne=?, durchmesser=?, gruppen=?, vc=?, fz=? WHERE id=?");
   $stmt->execute([
     $_POST['name'],
     $_POST['typ'],
     $_POST['zaehne'],
+    $_POST['durchmesser'],
     $_POST['gruppen'],
     $_POST['vc'],
     $_POST['fz'],
@@ -30,11 +31,12 @@ if (!empty($_POST['id'])) {
   ]);
 } else {
   // INSERT
-  $stmt = $pdo->prepare("INSERT INTO fraeser (name, typ, zaehne, gruppen, vc, fz) VALUES (?, ?, ?, ?, ?, ?)");
+  $stmt = $pdo->prepare("INSERT INTO fraeser (name, typ, zaehne, durchmesser, gruppen, vc, fz) VALUES (?, ?, ?, ?, ?, ?, ?)");
   $stmt->execute([
     $_POST['name'],
     $_POST['typ'],
     $_POST['zaehne'],
+    $_POST['durchmesser'],
     $_POST['gruppen'],
     $_POST['vc'],
     $_POST['fz']

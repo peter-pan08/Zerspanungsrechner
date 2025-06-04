@@ -91,6 +91,7 @@ $tables = [
     name VARCHAR(100),
     typ VARCHAR(50),
     zaehne INT,
+    durchmesser FLOAT,
     gruppen VARCHAR(20),
     vc FLOAT,
     fz FLOAT

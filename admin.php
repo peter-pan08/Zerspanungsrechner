@@ -116,6 +116,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
     <input type="text" placeholder="Bezeichnung" id="frae_name">
     <input type="text" placeholder="Typ" id="frae_typ">
     <input type="number" placeholder="Zähne" id="frae_z">
+    <input type="number" placeholder="Ø (mm)" id="frae_d">
     <input type="number" placeholder="Empf. vc" id="frae_vc">
     <input type="number" placeholder="Empf. fz" id="frae_fz" step="0.01">
     <div class="checkboxes">
@@ -129,7 +130,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
     <button type="button" onclick="saveFraeser()">Speichern</button>
   </form>
   <table id="fraeserTable">
-    <thead><tr><th>Name</th><th>Typ</th><th>Zähne</th><th>vc</th><th>fz</th><th>Gruppen</th><th>Aktion</th></tr></thead>
+    <thead><tr><th>Name</th><th>Typ</th><th>Zähne</th><th>Ø</th><th>vc</th><th>fz</th><th>Gruppen</th><th>Aktion</th></tr></thead>
     <tbody></tbody>
   </table>
 
@@ -235,6 +236,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
       formData.append('name', document.getElementById("frae_name").value);
       formData.append('typ', document.getElementById("frae_typ").value);
       formData.append('zaehne', document.getElementById("frae_z").value);
+      formData.append('durchmesser', document.getElementById("frae_d").value);
       formData.append('vc', document.getElementById("frae_vc").value);
       formData.append('fz', document.getElementById("frae_fz").value);
       const gruppen = Array.from(document.querySelectorAll("#fraeserForm .checkboxes input:checked")).map(cb => cb.value).join(',');
@@ -255,6 +257,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
       document.getElementById("frae_name").value = f.name;
       document.getElementById("frae_typ").value = f.typ;
       document.getElementById("frae_z").value = f.zaehne;
+      document.getElementById("frae_d").value = f.durchmesser;
       document.getElementById("frae_vc").value = f.vc;
       document.getElementById("frae_fz").value = f.fz;
       document.querySelectorAll("#fraeserForm .checkboxes input").forEach(cb => {
@@ -266,7 +269,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
       const tbody = document.querySelector("#fraeserTable tbody");
       tbody.innerHTML = "";
       fr.forEach(f => {
-        tbody.innerHTML += `<tr><td>${f.name}</td><td>${f.typ}</td><td>${f.zaehne}</td><td>${f.vc}</td><td>${f.fz}</td><td>${f.gruppen}</td><td><button onclick='editFraeser(${JSON.stringify(f)})'>Bearbeiten</button> <button onclick="deleteFraeser(${f.id})">Löschen</button></td></tr>`;
+        tbody.innerHTML += `<tr><td>${f.name}</td><td>${f.typ}</td><td>${f.zaehne}</td><td>${f.durchmesser}</td><td>${f.vc}</td><td>${f.fz}</td><td>${f.gruppen}</td><td><button onclick='editFraeser(${JSON.stringify(f)})'>Bearbeiten</button> <button onclick="deleteFraeser(${f.id})">Löschen</button></td></tr>`;
       });
     }
 

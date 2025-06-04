@@ -2,6 +2,10 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Admin: Material- und Schneidplatten-Datenbank';
   include 'header.php';
+require 'session_check.php';
+if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
+  die('Zugriff verweigert');
+}
 ?>
 <style>
     body {

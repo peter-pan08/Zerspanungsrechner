@@ -2,10 +2,12 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Benutzerverwaltung';
   include 'header.php';
-require 'session_check.php';
-if ($_SESSION['rolle'] !== 'admin') {
-  die('Zugriff verweigert');
-}
+  require 'session_check.php';
+  require 'config.php';
+  if ($_SESSION['rolle'] !== 'admin') {
+      header('Location: index.php');
+      exit;
+  }
 ?>
 <style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }

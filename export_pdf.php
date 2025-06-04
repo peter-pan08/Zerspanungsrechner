@@ -86,11 +86,23 @@ $pdf->Ln(5);
 // Tabelle mit Daten
 $pdf->SetFont('helvetica', '', 12);
 $html = '<table cellpadding="4">';
+$feedLabel = 'f oder fz';
+$feedValue = '-';
+if (isset($data['fz'])) {
+    $feedLabel = 'fz (mm/Zahn)';
+    $feedValue = $data['fz'];
+} elseif (isset($data['f'])) {
+    $feedLabel = 'f (mm/U)';
+    $feedValue = $data['f'];
+} elseif (isset($data['vf'])) {
+    $feedLabel = 'vf (mm/min)';
+    $feedValue = $data['vf'];
+}
 $labels = [
     'Material'                 => $data['material'] ?? '-',
     'Werkzeug'                 => $data['fraeser'] ?? ($data['platte'] ?? '-'),
     'vc (m/min)'               => $data['vc'] ?? '-',
-    'f oder fz'                => $data['fz'] ?? ($data['f'] ?? '-'),
+    $feedLabel                 => $feedValue,
     'ap (mm)'                  => $data['ap'] ?? '-',
     'Durchmesser (mm)'         => $data['D'] ?? '-',
     'Spindeldrehzahl'          => isset($data['n']) ? $data['n'] . ' U/min' : '-',

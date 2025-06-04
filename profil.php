@@ -37,6 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="password" name="password" required>
     <button type="submit">🔒 Passwort ändern</button>
   </form>
-  <div class="info"><?= $meldung ?></div>
+  <div class="info"><?= htmlspecialchars($meldung) ?></div>
 </body>
 </html>

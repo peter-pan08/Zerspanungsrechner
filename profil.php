@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!empty($neuesPasswort)) {
     $hash = password_hash($neuesPasswort, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE username = ?");
-    $stmt->execute([$hash, $_SESSION['user']]);
+    $stmt->execute([$hash, $_SESSION['username']]);
     $meldung = "✅ Passwort wurde geändert.";
   } else {
     $meldung = "⚠️ Bitte ein neues Passwort eingeben.";
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <h2>👤 Mein Profil</h2>
-  <p>Angemeldet als: <strong><?= htmlspecialchars($_SESSION['user']) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
+  <p>Angemeldet als: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
   <form method="post">
     <label>Neues Passwort:</label>
     <input type="password" name="password" required>

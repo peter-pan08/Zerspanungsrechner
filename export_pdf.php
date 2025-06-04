@@ -52,7 +52,8 @@ if (file_exists($logoSvg) && method_exists($pdf, 'ImageSVG')) {
 // Abstand nach Logo
 $pdf->Ln(20);
 
-// Überschrift\ n$pdf->SetFont('helvetica', 'B', 16);
+// Überschrift
+$pdf->SetFont('helvetica', 'B', 16);
 $pdf->Cell(0, 0, 'Zerspanungs-Ergebnis', 0, 1, 'C');
 $pdf->Ln(5);
 

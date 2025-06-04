@@ -4,13 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include 'header.php';
  ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Zerspanungsrechner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+<style>
     body {
       font-family: sans-serif;
       margin: 20px;
@@ -63,8 +57,6 @@ include 'header.php';
     .top-nav a:hover { text-decoration: underline; }
     h2 { color: #e0e1dd; }
   </style>
-</head>
-<body>
 
   <h2>Zerspanungsrechner</h2>
 

@@ -1,14 +1,9 @@
 <?php
   define('REQUIRE_SESSION', true);
-  $pageTitle = 'Zerspanungsrechner';
+  $pageTitle = 'Datenexport';
   include 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Datenexport</title>
-  <style>
+<style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; text-align: center; padding-top: 50px; }
     h2 { margin-bottom: 30px; }
     a.button {
@@ -32,8 +27,6 @@
       font-weight: bold;
     }
   </style>
-</head>
-<body>
 
   <h2>📤 Ergebnisdaten exportieren</h2>
   <p>Wähle ein Format:</p>

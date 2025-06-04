@@ -1,14 +1,9 @@
 <?php
   define('REQUIRE_SESSION', true);
-  $pageTitle = 'Zerspanungsrechner';
+  $pageTitle = 'Benutzerverwaltung';
   include 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Benutzerverwaltung</title>
-  <style>
+<style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }
     input, select { padding: 6px; width: 100%; margin-bottom: 10px; background: #415a77; color: white; border: 1px solid #778da9; }
     button { padding: 8px; background: #00b4d8; color: black; font-weight: bold; border: none; }
@@ -17,8 +12,6 @@
     .top-nav a { margin-right: 10px; color: #00b4d8; text-decoration: none; font-weight: bold; }
     h2 { margin-bottom: 10px; }
   </style>
-</head>
-<body>
 
   <h2>Benutzerverwaltung</h2>
 

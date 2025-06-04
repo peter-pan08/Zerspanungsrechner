@@ -1,6 +1,6 @@
 <?php
   define('REQUIRE_SESSION', true);
-  $pageTitle = 'Zerspanungsrechner';
+  $pageTitle = 'PDF-Upload';
   include 'header.php';
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
   $file = $_FILES['pdf']['tmp_name'];
@@ -27,19 +27,12 @@
   }
 }
 ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>PDF-Upload</title>
-  <style>
+<style>
     body { background: #0a0f14; color: #e0e1dd; font-family: sans-serif; max-width: 800px; margin: auto; padding-top: 40px; }
     input, button { width: 100%; padding: 10px; margin: 10px 0; background: #415a77; color: white; border: 1px solid #778da9; }
     button { background: #00b4d8; color: black; font-weight: bold; }
     .top-nav a { margin-right: 10px; color: #00b4d8; text-decoration: none; font-weight: bold; }
   </style>
-</head>
-<body>
 
   <h2>📤 PDF-Upload & Textanalyse</h2>
   <form method="post" enctype="multipart/form-data">

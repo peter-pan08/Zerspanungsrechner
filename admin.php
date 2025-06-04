@@ -141,7 +141,10 @@
     }
 
     async function deleteMaterial(id) {
-      await fetch('delete_material.php?id=' + id);
+      await fetch('delete_material.php', {
+        method: 'POST',
+        body: new URLSearchParams({ id })
+      });
       loadData();
     }
 
@@ -179,7 +182,10 @@
     }
 
     async function deletePlatte(id) {
-      await fetch('delete_platte.php?id=' + id);
+      await fetch('delete_platte.php', {
+        method: 'POST',
+        body: new URLSearchParams({ id })
+      });
       loadData();
     }
 

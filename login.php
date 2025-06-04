@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 require 'config.php';
 session_start();
 
-// Bereits eingeloggt? Dann weiter zur Zerspanung (HTML-Datei)
+// Bereits eingeloggt? Dann weiter zur Zerspanung (PHP-Datei)
 if (isset($_SESSION['user_id'])) {
     header('Location: zerspanung.php');
     exit;

@@ -36,12 +36,12 @@
     <tr><th>ID</th><th>Benutzer</th><th>Rolle</th><th>Aktionen</th></tr>
     <?php foreach ($nutzer as $n): ?>
       <tr>
-        <td><?= $n['id'] ?></td>
-        <td><?= $n['username'] ?></td>
-        <td><?= $n['rolle'] ?></td>
+        <td><?= htmlspecialchars($n['id']) ?></td>
+        <td><?= htmlspecialchars($n['username']) ?></td>
+        <td><?= htmlspecialchars($n['rolle']) ?></td>
         <td>
           <form method="post" style="margin-bottom:5px">
-            <input type="hidden" name="id" value="<?= $n['id'] ?>">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($n['id']) ?>">
             <input type="password" name="password" placeholder="Neues Passwort (leer = bleibt)">
             <select name="rolle">
               <option value="admin"<?= $n['rolle'] === 'admin' ? ' selected' : '' ?>>Admin</option>
@@ -51,7 +51,7 @@
             <button type="submit" name="edit_benutzer">💾 Speichern</button>
           </form>
           <form method="post">
-            <input type="hidden" name="id" value="<?= $n['id'] ?>">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($n['id']) ?>">
             <button type="submit" name="loeschen" onclick="return confirm('Soll dieser Benutzer wirklich gelöscht werden?')">🗑️ Löschen</button>
           </form>
         </td>

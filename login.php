@@ -6,7 +6,7 @@ require 'config.php';
 session_start();
 
 // Bereits eingeloggt? Dann weiter zur Zerspanung (HTML-Datei)
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['username'])) {
     header('Location: zerspanung.php');
     exit;
 }
@@ -36,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_result($id, $hash, $rolle);
 
             if ($stmt->fetch() && password_verify($password, $hash)) {
-                $_SESSION['user_id']   = $id;
                 $_SESSION['username']  = $username;
                 $_SESSION['rolle']     = $rolle;
                 header('Location: zerspanung.php');

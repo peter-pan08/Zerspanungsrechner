@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Wenn kein Login, zurück zur Login-Seite
-if (empty($_SESSION['user_id'])) {
+if (empty($_SESSION['username'])) {
     header('Location: login.php');
     exit;
 }

@@ -1,5 +1,5 @@
 <?php
-  define('REQUIRE_SESSION', true);
+  // define('REQUIRE_SESSION', true);
   $pageTitle = 'Registrieren';
   include 'header.php';
 require 'config.php';

@@ -13,11 +13,23 @@ $sheet->setTitle('Zerspanung');
 $sheet->setCellValue('A1', 'Bezeichnung');
 $sheet->setCellValue('B1', 'Wert');
 
+$feedLabel = 'f oder fz';
+$feedKey = 'fz';
+if (isset($data['fz'])) {
+    $feedLabel = 'fz (mm/Zahn)';
+    $feedKey = 'fz';
+} elseif (isset($data['f'])) {
+    $feedLabel = 'f (mm/U)';
+    $feedKey = 'f';
+} elseif (isset($data['vf'])) {
+    $feedLabel = 'vf (mm/min)';
+    $feedKey = 'vf';
+}
 $labels = [
   'Material' => 'material',
   'Werkzeug' => 'fraeser',
   'vc (m/min)' => 'vc',
-  'f oder fz' => 'fz',
+  $feedLabel => $feedKey,
   'ap (mm)' => 'ap',
   'Durchmesser (mm)' => 'D',
   'Spindeldrehzahl (U/min)' => 'n',

@@ -8,11 +8,19 @@ header('Content-Disposition: attachment; filename="zerspanung_export.csv"');
 
 $output = fopen('php://output', 'w');
 // Spaltenüberschriften
+$feedLabel = 'f oder fz';
+if (isset($_SESSION['export']['fz'])) {
+    $feedLabel = 'fz (mm/Zahn)';
+} elseif (isset($_SESSION['export']['f'])) {
+    $feedLabel = 'f (mm/U)';
+} elseif (isset($_SESSION['export']['vf'])) {
+    $feedLabel = 'vf (mm/min)';
+}
 fputcsv($output, [
   'Material',
   'Werkzeug',
   'vc (m/min)',
-  'f oder fz',
+  $feedLabel,
   'ap (mm)',
   'Durchmesser (mm)',
   'Spindeldrehzahl (U/min)',
@@ -38,6 +46,7 @@ if (!isset($data['fraeser']) && isset($data['platte'])) {
 if (!isset($data['fz']) && isset($data['f'])) {
     $data['fz'] = $data['f'];
 }
+$feedValue = $data['fz'] ?? ($data['f'] ?? ($data['vf'] ?? ''));
 
 // Wenn Daten da sind, in die CSV schreiben, sonst Fehlermeldung
 if (!empty($data)) {
@@ -45,7 +54,7 @@ if (!empty($data)) {
     $data['material']   ?? '',
     $data['fraeser']    ?? ($data['platte'] ?? ''),
     $data['vc']         ?? '',
-    $data['fz']         ?? ($data['f'] ?? ''),
+    $feedValue,
     $data['ap']         ?? '',
     $data['D']          ?? '',
     $data['n']          ?? '',

@@ -5,6 +5,9 @@
 require 'session_check.php';
 require 'config.php';
 
+// Logged in user's name
+$currentUser = $_SESSION['username'];
+
 $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -14,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!empty($neuesPasswort)) {
     $hash = password_hash($neuesPasswort, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE username = ?");
-    $stmt->execute([$hash, $_SESSION['username']]);
+    $stmt->execute([$hash, $currentUser]);
     $meldung = "✅ Passwort wurde geändert.";
   } else {
     $meldung = "⚠️ Bitte ein neues Passwort eingeben.";
@@ -28,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .info { margin-top: 15px; font-weight: bold; }
   </style>
   <h2>👤 Mein Profil</h2>
-  <p>Angemeldet als: <strong><?= htmlspecialchars($_SESSION['username']) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
+  <p>Angemeldet als: <strong><?= htmlspecialchars($currentUser) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
   <form method="post">
     <label>Neues Passwort:</label>
     <input type="password" name="password" required>

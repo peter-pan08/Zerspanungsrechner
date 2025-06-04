@@ -30,10 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <input name="appuser" required>
     <label>App-Benutzerpasswort:</label>
     <input type="password" name="apppass" required>
-    <label>Demo-Modus:</label>
+    <label>Betriebsmodus:</label>
     <select name="demo_mode">
-      <option value="false">Demo-Modus AUS</option>
-      <option value="true">Demo-Modus AN</option>
+      <option value="false">Standard</option>
+      <option value="true">Demo-Modus</option>
+    </select>
+    <label>Beispieldaten importieren?</label>
+    <select name="import_demo">
+      <option value="false">Nein</option>
+      <option value="true">Ja</option>
     </select>
     <button type="submit">Installation starten</button>
   </form>
@@ -48,6 +53,15 @@ $dbname = $_POST['dbname'];
 $appuser = $_POST['appuser'];
 $apppass = $_POST['apppass'];
 $demo_mode = isset($_POST['demo_mode']) && $_POST['demo_mode'] === 'true' ? 'true' : 'false';
+$import_demo = isset($_POST['import_demo']) && $_POST['import_demo'] === 'true';
+
+$existing_demo = null;
+if (file_exists('config.php')) {
+  include 'config.php';
+  if (defined('DEMO_MODE')) {
+    $existing_demo = DEMO_MODE ? 'true' : 'false';
+  }
+}
 
 $conn = new mysqli($dbhost, $dbuser, $dbpass);
 if ($conn->connect_error) {
@@ -102,9 +116,20 @@ $conn->query("FLUSH PRIVILEGES");
 $ph = password_hash("admin123", PASSWORD_DEFAULT);
 $conn->query("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES ('admin', '$ph', 'admin')");
 
+if ($import_demo && file_exists('beispieldaten.sql')) {
+  $demoSql = file_get_contents('beispieldaten.sql');
+  if (!$conn->multi_query($demoSql)) {
+    echo "<p>Fehler beim Import der Beispieldaten: " . $conn->error . "</p>";
+  } else {
+    while ($conn->more_results() && $conn->next_result()) { }
+    echo "<p>Beispieldaten wurden importiert.</p>";
+  }
+}
+
+$demo_setting = $existing_demo !== null ? $existing_demo : $demo_mode;
 $config = <<<PHP
 <?php
-define('DEMO_MODE', $demo_mode);  // Demo-Modus aktiv: kein Löschen möglich
+define('DEMO_MODE', $demo_setting);  // Demo-Modus aktiv: kein Löschen möglich
 
 \$host = '$dbhost';
 \$user = '$appuser';
@@ -112,11 +137,20 @@ define('DEMO_MODE', $demo_mode);  // Demo-Modus aktiv: kein Löschen möglich
 \$db = '$dbname';
 ?>
 PHP;
-file_put_contents("config.php", $config);
+
+$config_written = false;
+if (!file_exists("config.php")) {
+  file_put_contents("config.php", $config);
+  $config_written = true;
+}
+
+$messageCfg = $config_written
+  ? "<p><strong>config.php</strong> wurde erfolgreich gespeichert.</p>"
+  : "<p><strong>config.php</strong> ist bereits vorhanden und wurde nicht überschrieben.</p>";
 
 echo <<<HTML
 <h2>✅ Installation abgeschlossen</h2>
-<p><strong>config.php</strong> wurde erfolgreich gespeichert.</p>
+$messageCfg
 <p>Verwendeter Datenbankbenutzer (App): <strong>$appuser</strong></p>
 <p>Die Datenbank <strong>$dbname</strong> wurde vorbereitet.</p>
 <p><em>⚠️ Der Benutzer <strong>admin</strong> mit Passwort <strong>admin123</strong> ist ein Demo-Konto.<br>

@@ -2,6 +2,10 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Zerspanungsrechner';
   include 'header.php';
+require 'session_check.php';
+if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
+  die('Zugriff verweigert');
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">

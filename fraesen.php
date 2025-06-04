@@ -88,7 +88,7 @@ include 'header.php';
   </select>
 
   <label for="fraeser">Fräser:</label>
-  <select id="fraeser" onchange="berechne()"></select>
+  <select id="fraeser" onchange="fraeserGeaendert(); berechne();"></select>
 
   <label for="modus">Modus:</label>
   <select id="modus" onchange="umschaltenModus(); berechne();">
@@ -96,7 +96,7 @@ include 'header.php';
     <option value="n">Konstante Drehzahl</option>
   </select>
 
-  <label for="durchmesser">Werkstückdurchmesser (mm):</label>
+  <label for="durchmesser">Werkzeugdurchmesser (mm):</label>
   <input type="number" id="durchmesser" value="100" oninput="berechne()">
 
   <div id="drehzahlEingabe" style="display:none;">
@@ -135,6 +135,7 @@ include 'header.php';
       fraeser = data.fraeser;
       fuelleMaterialDropdown();
       fuelleFraeserDropdown();
+      fraeserGeaendert();
       berechne();
     }
 
@@ -257,12 +258,19 @@ function berechne() {
       materialien.forEach((m, i) => sel.innerHTML += `<option value="${i}">${m.name} (${m.gruppe} – ${gruppenMap[m.gruppe]})</option>`);
     }
 
-    function fuelleFraeserDropdown() {
+  function fuelleFraeserDropdown() {
       const sel = document.getElementById('fraeser'); sel.innerHTML = '';
       fraeser.forEach((p, i) => sel.innerHTML += `<option value="${i}">${p.name} (${p.typ}) – für ${p.gruppen.split(',').map(g=>gruppenMap[g]).join(', ')}</option>`);
-    }
+  }
 
-    window.onload = ladeDaten;
+  function fraeserGeaendert() {
+      const idx = parseInt(document.getElementById('fraeser').value);
+      if (fraeser[idx] && fraeser[idx].durchmesser) {
+        document.getElementById('durchmesser').value = fraeser[idx].durchmesser;
+      }
+  }
+
+  window.onload = ladeDaten;
   </script>
 </body>
 </html>

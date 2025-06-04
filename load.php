@@ -8,7 +8,8 @@ header('Content-Type: application/json');
 
 $data = [
   "materialien" => [],
-  "platten" => []
+  "platten" => [],
+  "fraeser" => []
 ];
 
 // Materialdaten laden
@@ -18,5 +19,9 @@ $data["materialien"] = $mat_stmt->fetchAll(PDO::FETCH_ASSOC);
 // Plattendaten laden
 $platt_stmt = $pdo->query("SELECT id, name, typ, gruppen, vc FROM platten ORDER BY name");
 $data["platten"] = $platt_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fräserdaten laden
+$fraes_stmt = $pdo->query("SELECT id, name, typ, zaehne, gruppen, vc, fz FROM fraeser ORDER BY name");
+$data["fraeser"] = $fraes_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 echo json_encode($data);

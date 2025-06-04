@@ -43,7 +43,8 @@
   <div class="top-nav">
     <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
     <a href="index.php">🏠 Startseite</a>
-    <a href="zerspanung.php">🧮 Zerspanung</a>
+    <a href="zerspanung.php">🤖 Drehbank</a>
+    <a href="fraesen.php">🛠️ Fräsen</a>
     <a href="admin.php">⚙️ Admin</a>
     <a href="admin_user.php">👥 Benutzer</a>
     <a href="profil.php">👤 Profil</a>

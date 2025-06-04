@@ -114,15 +114,40 @@
     <tbody></tbody>
   </table>
 
+  <h2>Fräser verwalten</h2>
+  <form id="fraeserForm">
+    <input type="hidden" id="frae_id">
+    <input type="text" placeholder="Bezeichnung" id="frae_name">
+    <input type="text" placeholder="Typ" id="frae_typ">
+    <input type="number" placeholder="Zähne" id="frae_z">
+    <input type="number" placeholder="Empf. vc" id="frae_vc">
+    <input type="number" placeholder="Empf. fz" id="frae_fz" step="0.01">
+    <div class="checkboxes">
+      <label><input type="checkbox" value="P"> P</label>
+      <label><input type="checkbox" value="M"> M</label>
+      <label><input type="checkbox" value="K"> K</label>
+      <label><input type="checkbox" value="N"> N</label>
+      <label><input type="checkbox" value="S"> S</label>
+      <label><input type="checkbox" value="H"> H</label>
+    </div>
+    <button type="button" onclick="saveFraeser()">Speichern</button>
+  </form>
+  <table id="fraeserTable">
+    <thead><tr><th>Name</th><th>Typ</th><th>Zähne</th><th>vc</th><th>fz</th><th>Gruppen</th><th>Aktion</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
   <script>
     let materialEditId = null;
     let plattenEditId = null;
+    let fraeserEditId = null;
 
     async function loadData() {
       const res = await fetch('load.php');
       const data = await res.json();
       renderMaterialTable(data.materialien);
       renderPlattenTable(data.platten);
+      renderFraeserTable(data.fraeser);
     }
 
     async function saveMaterial() {
@@ -199,6 +224,47 @@
       tbody.innerHTML = "";
       platten.forEach(p => {
         tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.typ}</td><td>${p.material}</td><td>${p.vc}</td><td>${p.gruppen}</td><td><button onclick='editPlatte(${JSON.stringify(p)})'>Bearbeiten</button> <button onclick="deletePlatte(${p.id})">Löschen</button></td></tr>`;
+      });
+    }
+
+    async function saveFraeser() {
+      const formData = new FormData();
+      if (fraeserEditId) formData.append('id', fraeserEditId);
+      formData.append('name', document.getElementById("frae_name").value);
+      formData.append('typ', document.getElementById("frae_typ").value);
+      formData.append('zaehne', document.getElementById("frae_z").value);
+      formData.append('vc', document.getElementById("frae_vc").value);
+      formData.append('fz', document.getElementById("frae_fz").value);
+      const gruppen = Array.from(document.querySelectorAll("#fraeserForm .checkboxes input:checked")).map(cb => cb.value).join(',');
+      formData.append('gruppen', gruppen);
+      await fetch('save_fraeser.php', { method: 'POST', body: formData });
+      fraeserEditId = null;
+      document.getElementById("fraeserForm").reset();
+      loadData();
+    }
+
+    async function deleteFraeser(id) {
+      await fetch('delete_fraeser.php?id=' + id);
+      loadData();
+    }
+
+    function editFraeser(f) {
+      fraeserEditId = f.id;
+      document.getElementById("frae_name").value = f.name;
+      document.getElementById("frae_typ").value = f.typ;
+      document.getElementById("frae_z").value = f.zaehne;
+      document.getElementById("frae_vc").value = f.vc;
+      document.getElementById("frae_fz").value = f.fz;
+      document.querySelectorAll("#fraeserForm .checkboxes input").forEach(cb => {
+        cb.checked = f.gruppen?.split(',').includes(cb.value);
+      });
+    }
+
+    function renderFraeserTable(fr) {
+      const tbody = document.querySelector("#fraeserTable tbody");
+      tbody.innerHTML = "";
+      fr.forEach(f => {
+        tbody.innerHTML += `<tr><td>${f.name}</td><td>${f.typ}</td><td>${f.zaehne}</td><td>${f.vc}</td><td>${f.fz}</td><td>${f.gruppen}</td><td><button onclick='editFraeser(${JSON.stringify(f)})'>Bearbeiten</button> <button onclick="deleteFraeser(${f.id})">Löschen</button></td></tr>`;
       });
     }
 

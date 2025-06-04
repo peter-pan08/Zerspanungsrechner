@@ -6,6 +6,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // Export-Daten aus der Session
 $data = $_SESSION['export'] ?? [];
+if (!isset($data['fraeser']) && isset($data['platte'])) {
+    $data['fraeser'] = $data['platte'];
+}
+if (!isset($data['fz']) && isset($data['f'])) {
+    $data['fz'] = $data['f'];
+}
 
 // Neues PDF erzeugen
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -61,9 +67,9 @@ $pdf->SetFont('helvetica', '', 12);
 $html = '<table cellpadding="4">';
 $labels = [
     'Material'                 => $data['material'] ?? '-',
-    'Schneidplatte'            => $data['platte'] ?? '-',
+    'Werkzeug'                 => $data['fraeser'] ?? ($data['platte'] ?? '-'),
     'vc (m/min)'               => $data['vc'] ?? '-',
-    'f (mm/U)'                 => $data['f'] ?? '-',
+    'f oder fz'                => $data['fz'] ?? ($data['f'] ?? '-'),
     'ap (mm)'                  => $data['ap'] ?? '-',
     'Durchmesser (mm)'         => $data['D'] ?? '-',
     'Spindeldrehzahl'          => isset($data['n']) ? $data['n'] . ' U/min' : '-',

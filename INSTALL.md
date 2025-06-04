@@ -37,6 +37,9 @@ chmod 640 /var/www/html/drehbank/config.php
 
 ## 📚 Beispieldaten (optional)
 
+Die Datei `beispieldaten.sql` enthält Beispiel-Materialien, Schneidplatten und Fräser.
+Importiere sie mit:
+
 ```bash
 mysql -u root -p drehbank < beispieldaten.sql
 ```
@@ -118,7 +121,9 @@ chmod 640 config.php
 
 ## 📤 Export verwenden
 
-- Rechne wie gewohnt in `zerspanung.html`
+- Rechne im gewünschten Modus:
+  - `zerspanung.php` für Drehbank
+  - `fraesen.php` für Fräsen
 - Werte werden in Session gespeichert
 - Rufe `export.php` auf für:
   - 📄 PDF

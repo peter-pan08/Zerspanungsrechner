@@ -29,6 +29,7 @@ chmod 640 /var/www/html/drehbank/config.php
 
 2. Datenbankzugangsdaten und App-User anlegen
 
+Hinweis: Die Tabelle `fraeser` enthält jetzt die Spalte `durchmesser` zur Ablage des Werkzeug-Ø. Der Installer legt diese Spalte automatisch an.
 3. Nach Login mit `admin` / `admin123`:
    - Neuen Admin anlegen
    - Demo-Admin löschen

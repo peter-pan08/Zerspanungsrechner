@@ -4,7 +4,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 
 ## ✅ Funktionen
 
-- 💠 Material-, Schneidplatten- **und Fräser-Datenbank** (verwaltbar via Admin)
+- 💠 Material-, Schneidplatten- **und Fräser-Datenbank** (verwaltbar via Admin, speichert den Durchmesser je Fräser)
 - 🧮 Zerspanungsrechner für **Drehbank und Fräsen** mit Leistungsberechnung, Schnittdaten, Motorlastanzeige und Warnung
 - 📤 Export: PDF, Excel (XLSX), CSV
 - 🌐 Benutzerverwaltung mit Rollen:
@@ -16,6 +16,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 - ⚠️ Schutz: Letzter Admin kann nicht gelöscht werden
 - 🛠 Webbasierter Installationsassistent (`install.php`)
 - 🧭 Navigation über alle Seiten integriert
+- 🔄 Dropdown für den Vorschubmodus (fz / f / vf) im Rechner
 - 👥 Admin-Bereich zum Verwalten von Materialien, Schneidplatten und Fräsern
 
 ## 🚀 Installation
@@ -59,6 +60,10 @@ sudo apt install composer
 | `export_excel.php`   | Export als XLSX                          |
 | `export_pdf.php`     | Export als PDF                           |
 | `session_export.php` | Speichert Berechnungsdaten für Export    |
+### Vorschubmodus wählen
+
+Im Rechner wählst du über ein Dropdown zwischen `fz` (mm/Zahn), `f` (mm/U) und `vf` (mm/min). Der Export übernimmt immer den aktuell gewählten Modus.
+
 
 ## 📦 Beispieldaten
 

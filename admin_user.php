@@ -2,6 +2,45 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Zerspanungsrechner';
   include 'header.php';
+  require 'config.php';
+
+  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['neuer_benutzer'])) {
+      $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
+      $stmt->execute([
+        $_POST['username'],
+        password_hash($_POST['password'], PASSWORD_DEFAULT),
+        $_POST['rolle']
+      ]);
+    } elseif (isset($_POST['edit_benutzer'])) {
+      if (isset($_POST['password']) && $_POST['password'] !== '') {
+        $stmt = $pdo->prepare("UPDATE users SET password_hash=?, rolle=? WHERE id=?");
+        $stmt->execute([
+          password_hash($_POST['password'], PASSWORD_DEFAULT),
+          $_POST['rolle'],
+          $_POST['id']
+        ]);
+      } else {
+        $stmt = $pdo->prepare("UPDATE users SET rolle=? WHERE id=?");
+        $stmt->execute([
+          $_POST['rolle'],
+          $_POST['id']
+        ]);
+      }
+    } elseif (isset($_POST['loeschen'])) {
+      if (defined('DEMO_MODE') && DEMO_MODE) {
+        echo "<p>🚫 Löschen im Demo-Modus nicht erlaubt.</p>";
+      } else {
+        $stmt = $pdo->prepare("DELETE FROM users WHERE id=?");
+        $stmt->execute([$_POST['id']]);
+      }
+    }
+  }
+
+  $nutzer = $pdo->query("SELECT id, username, rolle FROM users ORDER BY username")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="de">

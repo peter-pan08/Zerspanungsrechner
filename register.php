@@ -37,6 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="password" name="password" placeholder="Passwort" required>
     <button type="submit">Konto erstellen</button>
   </form>
-  <div class="info"><?= $meldung ?></div>
+  <div class="info"><?= htmlspecialchars($meldung) ?></div>
 </body>
 </html>

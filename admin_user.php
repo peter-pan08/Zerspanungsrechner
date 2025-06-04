@@ -2,7 +2,6 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Benutzerverwaltung';
   include 'header.php';
-  require 'session_check.php';
   require 'config.php';
 
   $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);

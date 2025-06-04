@@ -11,7 +11,7 @@ $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 if (isset($_POST['id'])) {
-  $stmt = $pdo->prepare("DELETE FROM materialien WHERE id = ?");
+  $stmt = $pdo->prepare("DELETE FROM platten WHERE id = ?");
   $stmt->execute([$_POST['id']]);
   echo "OK";
 }

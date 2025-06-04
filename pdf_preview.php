@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
 </head>
 <body>
   <div class="top-nav">
-    <a href="index.html">🏠 Startseite</a>
+    <a href="index.php">🏠 Startseite</a>
     <a href="zerspanung.html">🧮 Zerspanung</a>
     <a href="admin.html">⚙️ Admin</a>
     <a href="admin_user.php">👥 Benutzer</a>
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
     <button type="submit">📤 Hochladen & Auslesen</button>
   <button type="submit" name="save">💾 Speichern</button></form>
 
-  <?php if (\$extracted): ?>
+  <?php if ($extracted): ?>
 <?php $save_success = false; 
 if (isset($_POST['save']) && !empty($_POST['werkstoff'])) {
   require 'config.php';

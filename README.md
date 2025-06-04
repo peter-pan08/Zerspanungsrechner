@@ -6,6 +6,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 
 - 💠 Material-, Schneidplatten- **und Fräser-Datenbank** (verwaltbar via Admin)
 - 🧮 Zerspanungsrechner für **Drehbank und Fräsen** mit Leistungsberechnung, Schnittdaten, Motorlastanzeige und Warnung
+- ✨ Fräsrechner unterstützt Werkzeugdurchmesser sowie wählbare Vorschub-Modi (fz, f oder vf)
 - 📤 Export: PDF, Excel (XLSX), CSV
 - 🌐 Benutzerverwaltung mit Rollen:
   - `admin`: vollständiger Zugriff

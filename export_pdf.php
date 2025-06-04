@@ -19,22 +19,44 @@ $pdf->addPage();
 // Logo einbinden: SVG bevorzugt, sonst PNG
 $logoSvg = __DIR__ . '/dryba_logo_100.svg';
 $logoPng = __DIR__ . '/dryba_logo_100.png';
-if (file_exists($logoSvg) && method_exists($pdf, 'ImageSVG')) {
-    // SVG einbinden
-    $pdf->ImageSVG(
-        $file = $logoSvg,
-        $x = 15,
-        $y = 10,
-        $w = 40,
-        $h = 0,
-        $link = '',
-        $align = '',
-        $palign = '',
-        $border = 0,
-        $fitonpage = true
-    );
+
+if (file_exists($logoSvg)) {
+    try {
+        if (!method_exists($pdf, 'ImageSVG')) {
+            throw new Exception('ImageSVG not available');
+        }
+        // SVG einbinden
+        $pdf->ImageSVG(
+            $file = $logoSvg,
+            $x = 15,
+            $y = 10,
+            $w = 40,
+            $h = 0,
+            $link = '',
+            $align = '',
+            $palign = '',
+            $border = 0,
+            $fitonpage = true
+        );
+    } catch (Exception $e) {
+        if (file_exists($logoPng)) {
+            // PNG-Fallback bei Fehler
+            $pdf->Image(
+                $logoPng,
+                $x = 15,
+                $y = 10,
+                $w = 40,
+                $h = 0,
+                $type = 'PNG',
+                $link = '',
+                $align = 'T',
+                $resize = true,
+                $dpi = 300
+            );
+        }
+    }
 } elseif (file_exists($logoPng)) {
-    // PNG-Fallback
+    // PNG-Fallback, falls SVG fehlt
     $pdf->Image(
         $logoPng,
         $x = 15,
@@ -48,11 +70,10 @@ if (file_exists($logoSvg) && method_exists($pdf, 'ImageSVG')) {
         $dpi = 300
     );
 }
-
-// Abstand nach Logo
 $pdf->Ln(20);
 
-// Überschrift\ n$pdf->SetFont('helvetica', 'B', 16);
+// Überschrift
+$pdf->SetFont('helvetica', 'B', 16);
 $pdf->Cell(0, 0, 'Zerspanungs-Ergebnis', 0, 1, 'C');
 $pdf->Ln(5);
 

@@ -13,14 +13,19 @@
   }
 
   $meldung = "";
+  $validRoles = ['admin', 'editor', 'viewer'];
 
   if (isset($_POST['neuer_benutzer'])) {
-      $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
-      $stmt->execute([
-          $_POST['username'],
-          password_hash($_POST['password'], PASSWORD_DEFAULT),
-          $_POST['rolle']
-      ]);
+      if (in_array($_POST['rolle'], $validRoles, true)) {
+          $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
+          $stmt->execute([
+              $_POST['username'],
+              password_hash($_POST['password'], PASSWORD_DEFAULT),
+              $_POST['rolle']
+          ]);
+      } else {
+          $meldung = "🚫 Ungültige Rolle.";
+      }
   }
 
   if (isset($_POST['edit_benutzer'])) {
@@ -28,13 +33,17 @@
       $rolle = $_POST['rolle'];
       $pass = trim($_POST['password'] ?? '');
 
-      if ($pass !== '') {
-          $hash = password_hash($pass, PASSWORD_DEFAULT);
-          $stmt = $pdo->prepare("UPDATE users SET rolle = ?, password_hash = ? WHERE id = ?");
-          $stmt->execute([$rolle, $hash, $id]);
+      if (in_array($rolle, $validRoles, true)) {
+          if ($pass !== '') {
+              $hash = password_hash($pass, PASSWORD_DEFAULT);
+              $stmt = $pdo->prepare("UPDATE users SET rolle = ?, password_hash = ? WHERE id = ?");
+              $stmt->execute([$rolle, $hash, $id]);
+          } else {
+              $stmt = $pdo->prepare("UPDATE users SET rolle = ? WHERE id = ?");
+              $stmt->execute([$rolle, $id]);
+          }
       } else {
-          $stmt = $pdo->prepare("UPDATE users SET rolle = ? WHERE id = ?");
-          $stmt->execute([$rolle, $id]);
+          $meldung = "🚫 Ungültige Rolle.";
       }
   }
 

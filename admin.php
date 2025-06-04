@@ -1,15 +1,9 @@
 <?php
   define('REQUIRE_SESSION', true);
-  $pageTitle = 'Zerspanungsrechner';
+  $pageTitle = 'Admin: Material- und Schneidplatten-Datenbank';
   include 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin: Material- und Schneidplatten-Datenbank</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+<style>
     body {
       font-family: sans-serif;
       margin: 20px;
@@ -64,8 +58,6 @@
       color: #e0e1dd;
     }
   </style>
-</head>
-<body>
 
   <h1>Adminbereich: Material- und Schneidplattenverwaltung</h1>
 

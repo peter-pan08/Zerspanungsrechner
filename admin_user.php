@@ -2,6 +2,55 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Zerspanungsrechner';
   include 'header.php';
+  require 'config.php';
+
+  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['neuer_benutzer'])) {
+      $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
+      $stmt->execute([
+        trim($_POST['username']),
+        password_hash($_POST['password'], PASSWORD_DEFAULT),
+        $_POST['rolle']
+      ]);
+    } elseif (isset($_POST['edit_benutzer'])) {
+      $id = $_POST['id'];
+      $rolle = $_POST['rolle'];
+      $pass = trim($_POST['password']);
+      if ($pass !== '') {
+        $stmt = $pdo->prepare("UPDATE users SET password_hash = ?, rolle = ? WHERE id = ?");
+        $stmt->execute([
+          password_hash($pass, PASSWORD_DEFAULT),
+          $rolle,
+          $id
+        ]);
+      } else {
+        $stmt = $pdo->prepare("UPDATE users SET rolle = ? WHERE id = ?");
+        $stmt->execute([$rolle, $id]);
+      }
+    } elseif (isset($_POST['loeschen'])) {
+      if (!(defined('DEMO_MODE') && DEMO_MODE)) {
+        $id = $_POST['id'];
+        $stmt = $pdo->prepare("SELECT rolle FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        $rolle = $stmt->fetchColumn();
+        if ($rolle === 'admin') {
+          $cnt = $pdo->query("SELECT COUNT(*) FROM users WHERE rolle='admin'")->fetchColumn();
+          if ($cnt > 1) {
+            $del = $pdo->prepare("DELETE FROM users WHERE id = ?");
+            $del->execute([$id]);
+          }
+        } else {
+          $del = $pdo->prepare("DELETE FROM users WHERE id = ?");
+          $del->execute([$id]);
+        }
+      }
+    }
+  }
+
+  $nutzer = $pdo->query("SELECT id, username, rolle FROM users ORDER BY username")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="de">

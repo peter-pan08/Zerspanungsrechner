@@ -41,7 +41,7 @@
 </head>
 <body>
   <div class="top-nav">
-    <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
+    <img src="dryba_logo_100.png" alt="Dryba Logo" class="logo">
     <a href="index.php">🏠 Startseite</a>
     <a href="zerspanung.php">🧮 Zerspanung</a>
     <a href="admin.php">⚙️ Admin</a>

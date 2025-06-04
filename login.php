@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <div class="top-nav">
-    <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
+    <img src="dryba_logo_100.png" alt="Dryba Logo" class="logo">
     <a href="index.html">🏠 Startseite</a>
     <a href="register.php">📝 Registrieren</a>
   </div>

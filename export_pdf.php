@@ -19,21 +19,29 @@ $pdf->addPage();
 // Logo einbinden: SVG bevorzugt, sonst PNG
 $logoSvg = __DIR__ . '/dryba_logo_100.svg';
 $logoPng = __DIR__ . '/dryba_logo_100.png';
+$svgOk = false;
 if (file_exists($logoSvg) && method_exists($pdf, 'ImageSVG')) {
-    // SVG einbinden
-    $pdf->ImageSVG(
-        $file = $logoSvg,
-        $x = 15,
-        $y = 10,
-        $w = 40,
-        $h = 0,
-        $link = '',
-        $align = '',
-        $palign = '',
-        $border = 0,
-        $fitonpage = true
-    );
-} elseif (file_exists($logoPng)) {
+    try {
+        // SVG einbinden
+        $pdf->ImageSVG(
+            $file = $logoSvg,
+            $x = 15,
+            $y = 10,
+            $w = 40,
+            $h = 0,
+            $link = '',
+            $align = '',
+            $palign = '',
+            $border = 0,
+            $fitonpage = true
+        );
+        $svgOk = true;
+    } catch (Exception $e) {
+        $svgOk = false;
+    }
+}
+
+if (!$svgOk && file_exists($logoPng)) {
     // PNG-Fallback
     $pdf->Image(
         $logoPng,

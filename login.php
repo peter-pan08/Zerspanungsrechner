@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <div class="top-nav">
     <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
-    <a href="index.html">🏠 Startseite</a>
+    <a href="index.php">🏠 Startseite</a>
     <a href="register.php">📝 Registrieren</a>
   </div>
 

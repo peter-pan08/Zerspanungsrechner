@@ -1,11 +1,11 @@
 # Zerspanungsrechner (Web-App)
 
-Ein interaktiver Zerspanungsrechner mit Materialdatenbank, Schneidplattenverwaltung, Benutzer-Login, Exportfunktionen – ideal für CNC-Projekte.
+Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutzer-Login sowie Exportfunktionen – ideal für CNC-Projekte.
 
 ## ✅ Funktionen
 
-- 💠 Material- und Schneidplatten-Datenbank (verwaltbar via Admin)
-- 🧮 Zerspanungsrechner mit Leistungsberechnung, Schnittdaten, Motorlastanzeige und Warnung
+- 💠 Material-, Schneidplatten- **und Fräser-Datenbank** (verwaltbar via Admin)
+- 🧮 Zerspanungsrechner für **Drehbank und Fräsen** mit Leistungsberechnung, Schnittdaten, Motorlastanzeige und Warnung
 - 📤 Export: PDF, Excel (XLSX), CSV
 - 🌐 Benutzerverwaltung mit Rollen:
   - `admin`: vollständiger Zugriff
@@ -16,6 +16,7 @@ Ein interaktiver Zerspanungsrechner mit Materialdatenbank, Schneidplattenverwalt
 - ⚠️ Schutz: Letzter Admin kann nicht gelöscht werden
 - 🛠 Webbasierter Installationsassistent (`install.php`)
 - 🧭 Navigation über alle Seiten integriert
+- 👥 Admin-Bereich zum Verwalten von Materialien, Schneidplatten und Fräsern
 
 ## 🚀 Installation
 
@@ -50,8 +51,9 @@ sudo apt install composer
 | `register.php`       | Registrierung (viewer)                   |
 | `profil.php`         | Passwort ändern                           |
 | `admin_user.php`     | Benutzerverwaltung                        |
-| `admin.html`         | Admin-Oberfläche für Materialien/Platten |
-| `zerspanung.html`    | Hauptrechner mit Berechnung              |
+| `admin.php`          | Admin-Oberfläche für Materialien, Platten & Fräser |
+| `zerspanung.php`     | Rechner für Drehbank                      |
+| `fraesen.php`        | Rechner für Fräsen                        |
 | `export.php`         | Export-Auswahlseite                      |
 | `export_csv.php`     | Export als CSV                           |
 | `export_excel.php`   | Export als XLSX                          |
@@ -60,7 +62,7 @@ sudo apt install composer
 
 ## 📦 Beispieldaten
 
-Importieren über:
+Beinhaltet Beispiel-Materialien, Schneidplatten und Fräser. Importieren über:
 
 ```bash
 mysql -u root -p drehbank < beispieldaten.sql

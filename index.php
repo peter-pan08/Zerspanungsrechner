@@ -34,7 +34,8 @@
 <body>
   <h1>🔧 Zerspanungsrechner – Demo-Version</h1>
   <p>Willkommen zur öffentlichen Demoversion. Löschen und Bearbeiten sind deaktiviert.</p>
-  <a href="zerspanung.php" class="button">🧮 Rechner starten</a>
+  <a href="zerspanung.php" class="button">🤖 Drehbank</a>
+  <a href="fraesen.php" class="button">🛠️ Fräsen</a>
   <a href="login.php" class="button">🔐 Login</a>
   <p class="hinweis">⚠️ Im Demo-Modus können keine Daten gelöscht oder geändert werden.</p>
 </body>

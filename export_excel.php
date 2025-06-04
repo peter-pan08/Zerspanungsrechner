@@ -15,9 +15,9 @@ $sheet->setCellValue('B1', 'Wert');
 
 $labels = [
   'Material' => 'material',
-  'Schneidplatte' => 'platte',
+  'Werkzeug' => 'fraeser',
   'vc (m/min)' => 'vc',
-  'f (mm/U)' => 'f',
+  'f oder fz' => 'fz',
   'ap (mm)' => 'ap',
   'Durchmesser (mm)' => 'D',
   'Spindeldrehzahl (U/min)' => 'n',
@@ -33,6 +33,13 @@ $labels = [
   'Motordrehmoment (Nm)' => 'motordrehmoment',
   'Motordrehmoment-Auslastung (%)' => 'drehmomentMotorProzent'
 ];
+
+if (!isset($data['fraeser']) && isset($data['platte'])) {
+    $data['fraeser'] = $data['platte'];
+}
+if (!isset($data['fz']) && isset($data['f'])) {
+    $data['fz'] = $data['f'];
+}
 
 $row = 2;
 if (!empty($data)) {

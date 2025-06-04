@@ -17,6 +17,11 @@ INSERT INTO platten (name, typ, gruppen, vc) VALUES
 ('CCMT09T304 UE6020', 'CCMT09T304', 'P,M,K', 130),
 ('MGMT150408-PM YBC251', 'MGMT150408', 'P,M,K', 140);
 
+-- Beispiel-Fräser
+INSERT INTO fraeser (name, typ, zaehne, gruppen, vc, fz) VALUES
+('3-Schneider \xC3\x9810', 'VHM-Schaftfräser', 3, 'P,M,K,N', 120, 0.05),
+('4-Schneider \xC3\x988', 'HSS-Schaftfräser', 4, 'P,M,K', 60, 0.04);
+
 -- Demo-Benutzer mit Rolle viewer
 INSERT IGNORE INTO users (username, password_hash, rolle) VALUES (
   'demo_viewer',

@@ -10,9 +10,9 @@ $output = fopen('php://output', 'w');
 // Spaltenüberschriften
 fputcsv($output, [
   'Material',
-  'Schneidplatte',
+  'Werkzeug',
   'vc (m/min)',
-  'f (mm/U)',
+  'f oder fz',
   'ap (mm)',
   'Durchmesser (mm)',
   'Spindeldrehzahl (U/min)',
@@ -32,13 +32,20 @@ fputcsv($output, [
 // Daten aus Session holen (Session-Schlüssel "export")
 $data = $_SESSION['export'] ?? [];
 
+if (!isset($data['fraeser']) && isset($data['platte'])) {
+    $data['fraeser'] = $data['platte'];
+}
+if (!isset($data['fz']) && isset($data['f'])) {
+    $data['fz'] = $data['f'];
+}
+
 // Wenn Daten da sind, in die CSV schreiben, sonst Fehlermeldung
 if (!empty($data)) {
   fputcsv($output, [
     $data['material']   ?? '',
-    $data['platte']     ?? '',
+    $data['fraeser']    ?? ($data['platte'] ?? ''),
     $data['vc']         ?? '',
-    $data['f']          ?? '',
+    $data['fz']         ?? ($data['f'] ?? ''),
     $data['ap']         ?? '',
     $data['D']          ?? '',
     $data['n']          ?? '',

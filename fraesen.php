@@ -110,8 +110,15 @@ include 'header.php';
   <label for="ae">Seitliche Zustellung ae (mm):</label>
   <input type="number" id="ae" step="0.01" value="5" oninput="berechne()">
 
-  <label for="fz">Vorschub fz (mm/Zahn):</label>
-  <input type="number" id="fz" step="0.01" value="0.05" oninput="berechne()">
+  <label for="feedMode">Vorschubmodus:</label>
+  <select id="feedMode" onchange="feedModeChanged(); berechne();">
+    <option value="fz" selected>fz (mm/Zahn)</option>
+    <option value="f">f (mm/U)</option>
+    <option value="vf">vf (mm/min)</option>
+  </select>
+
+  <label id="feedLabel" for="feed">Vorschub fz (mm/Zahn):</label>
+  <input type="number" id="feed" step="0.01" value="0.05" oninput="berechne()">
 
   <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
   <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
@@ -136,12 +143,27 @@ include 'header.php';
       fuelleMaterialDropdown();
       fuelleFraeserDropdown();
       fraeserGeaendert();
+      feedModeChanged();
       berechne();
     }
 
     function umschaltenModus() {
       document.getElementById('drehzahlEingabe').style.display =
         document.getElementById('modus').value === 'n' ? 'block' : 'none';
+    }
+
+    function feedModeChanged() {
+      const mode = document.getElementById('feedMode').value;
+      const label = document.getElementById('feedLabel');
+      if (mode === 'fz') label.textContent = 'Vorschub fz (mm/Zahn):';
+      else if (mode === 'f') label.textContent = 'Vorschub f (mm/U):';
+      else label.textContent = 'Vorschub vf (mm/min):';
+      if (mode === 'fz') {
+        const idx = parseInt(document.getElementById('fraeser').value);
+        if (fraeser[idx] && fraeser[idx].fz) {
+          document.getElementById('feed').value = fraeser[idx].fz;
+        }
+      }
     }
 
 function berechne() {
@@ -152,7 +174,7 @@ function berechne() {
   const d = parseFloat(document.getElementById('durchmesser').value);
   const ap = parseFloat(document.getElementById('ap').value);
   const ae = parseFloat(document.getElementById('ae').value);
-  const fz = parseFloat(document.getElementById('fz').value);
+  const feed = parseFloat(document.getElementById('feed').value);
 
   const mat = materialien[parseInt(document.getElementById('material').value)];
   const schn = document.getElementById('schneidstoff').value;
@@ -169,7 +191,22 @@ function berechne() {
   const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
   const tool = fraeser[parseInt(document.getElementById('fraeser').value)];
   const z = tool.zaehne || 1;
-  const vf = n * z * fz; // mm/min
+
+  let fz, f, vf;
+  const mode = document.getElementById('feedMode').value;
+  if (mode === 'fz') {
+    fz = feed;
+    f = feed * z;
+    vf = n * f;
+  } else if (mode === 'f') {
+    f = feed;
+    fz = z ? feed / z : 0;
+    vf = n * feed;
+  } else {
+    vf = feed;
+    f = n ? feed / n : 0;
+    fz = (n && z) ? feed / (n * z) : 0;
+  }
 
   // Spanvolumen q in mm³/min und dann in cm³/min
   const q_mm3 = ap * ae * vf; // mm³/min
@@ -234,6 +271,7 @@ function berechne() {
       fraeser: tool.name,
       vc: vc_berechnet.toFixed(1),
       fz,
+      f,
       ap,
       ae,
       D: d,
@@ -265,8 +303,13 @@ function berechne() {
 
   function fraeserGeaendert() {
       const idx = parseInt(document.getElementById('fraeser').value);
-      if (fraeser[idx] && fraeser[idx].durchmesser) {
-        document.getElementById('durchmesser').value = fraeser[idx].durchmesser;
+      if (fraeser[idx]) {
+        if (fraeser[idx].durchmesser) {
+          document.getElementById('durchmesser').value = fraeser[idx].durchmesser;
+        }
+        if (fraeser[idx].fz && document.getElementById('feedMode').value === 'fz') {
+          document.getElementById('feed').value = fraeser[idx].fz;
+        }
       }
   }
 

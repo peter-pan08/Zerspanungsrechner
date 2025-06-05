@@ -63,7 +63,7 @@ sudo apt install composer
 | `session_export.php` | Speichert Berechnungsdaten für Export    |
 ### Vorschubmodus wählen
 
-Im Rechner wählst du über ein Dropdown zwischen `fz` (mm/Zahn), `f` (mm/U) und `vf` (mm/min). Der Export übernimmt immer den aktuell gewählten Modus.
+Direkt beim Eingabefeld für den Vorschub findest du ein Dropdown zur Wahl des Modus `fz`, `f` oder `vf`. Der Labeltext passt sich entsprechend an und der eingegebene Wert wird als Vorschub pro Zahn, pro Umdrehung oder als Vorschubgeschwindigkeit interpretiert. Wählst du `fz` und änderst den Fräser, wird automatisch der empfohlene fz-Wert aus der Datenbank geladen. Der Export speichert alle drei Werte und verwendet den aktuell aktiven Modus.
 
 
 ## 📦 Beispieldaten

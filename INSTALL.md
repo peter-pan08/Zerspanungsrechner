@@ -14,7 +14,10 @@
 ```bash
 sudo chown -R www-data:www-data /var/www/html/drehbank
 ```
-2. `config.example.php` nach `config.php` kopieren und anpassen. Wer die Datei lokal weiter versionieren möchte, kann `git update-index --skip-worktree config.php` verwenden.
+2. **Installer starten**:
+   `http://DEIN_SERVER/drehbank/install.php`
+   - Erstellt `config.php`, falls sie fehlt. Kopiere also keine Example-Datei vorab oder lösche/benenne vorhandene Kopien, damit der Installer neue Zugangsdaten schreiben kann.
+   - Wer die Datei lokal weiter versionieren möchte, kann danach `git update-index --skip-worktree config.php` verwenden.
 
 3. Optional: Rechte für Konfigdatei:
 ```bash
@@ -37,6 +40,8 @@ Hinweis: Die Tabelle `fraeser` enthält jetzt die Spalte `durchmesser` zur Ablag
    - Demo-Admin löschen
 
 Die Einstellung kann später über die Einstellungen (`settings.php`) oder `LOGIN_REQUIRED` in `config.php` angepasst werden.
+
+*(Fallback)* Sollte der Installer nicht zur Verfügung stehen, kopiere `config.example.php` manuell zu `config.php` und passe die Werte an.
 
 ---
 

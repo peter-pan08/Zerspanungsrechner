@@ -16,6 +16,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 - 📝 Selbstregistrierung über `register.php` (automatisch `viewer`)
 - ⚠️ Schutz: Letzter Admin kann nicht gelöscht werden
 - 🛠 Webbasierter Installationsassistent (`install.php`)
+- 🔑 Login-Pflicht lässt sich über `LOGIN_REQUIRED` in `config.php` steuern
 - 🧭 Navigation über alle Seiten integriert
 - 🔄 Dropdown für den Vorschubmodus (fz / f / vf) im Rechner
 - 👥 Admin-Bereich zum Verwalten von Materialien, Schneidplatten und Fräsern
@@ -23,10 +24,12 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 ## 🚀 Installation
 
 1. **Dateien hochladen** nach `/var/www/html/drehbank`
-2. **Installer starten**:  
+2. **Installer starten**:
    `https://DEIN_SERVER/drehbank/install.php`
 3. **Datenbankzugangsdaten eingeben**
-4. **Admin-Benutzer anlegen und Demo-Admin entfernen**
+4. **Benutzerverwaltung aktivieren?** (Login-Pflicht)
+5. **Admin-Benutzer anlegen und Demo-Admin entfernen** (nur bei aktivierter Benutzerverwaltung)
+   - Die Einstellung kann später über `LOGIN_REQUIRED` in `config.php` geändert werden
 
 ## 🛠️ Erforderliche Erweiterungen
 
@@ -78,7 +81,7 @@ mysql -u root -p drehbank < beispieldaten.sql
 
 Führe bei bestehenden Setups nach dem Update auf diese Version `update.php` aus:
 
-1. Melde dich als `admin` an.
+1. Wenn die Benutzerverwaltung aktiv ist, melde dich als `admin` an.
 2. Rufe `https://DEIN_SERVER/drehbank/update.php` auf.
 3. Klicke auf **Update ausführen**, um die neue Spalte `durchmesser` in der Tabelle `fraeser` anzulegen.
 

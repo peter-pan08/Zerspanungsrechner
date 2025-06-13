@@ -1,11 +1,16 @@
 <?php
-  define('REQUIRE_SESSION', true);
+  require 'config.php';
+  if (LOGIN_REQUIRED) {
+    define('REQUIRE_SESSION', true);
+  }
   $pageTitle = 'System-Update';
   include 'header.php';
-require 'session_check.php';
-if ($_SESSION['rolle'] !== 'admin') {
-  die('Zugriff verweigert');
-}
+  if (LOGIN_REQUIRED) {
+    require 'session_check.php';
+    if ($_SESSION['rolle'] !== 'admin') {
+      die('Zugriff verweigert');
+    }
+  }
 ?>
 <style>
     body { font-family: sans-serif; background: #0a0f14; color: #e0e1dd; max-width: 600px; margin: auto; padding-top: 40px; }

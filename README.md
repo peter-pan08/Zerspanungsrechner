@@ -81,7 +81,7 @@ mysql -u root -p drehbank < beispieldaten.sql
 
 Führe bei bestehenden Setups nach dem Update auf diese Version `update.php` aus:
 
-1. Melde dich als `admin` an.
+1. Wenn die Benutzerverwaltung aktiv ist, melde dich als `admin` an.
 2. Rufe `https://DEIN_SERVER/drehbank/update.php` auf.
 3. Klicke auf **Update ausführen**, um die neue Spalte `durchmesser` in der Tabelle `fraeser` anzulegen.
 

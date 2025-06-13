@@ -14,8 +14,9 @@
 ```bash
 sudo chown -R www-data:www-data /var/www/html/drehbank
 ```
+2. `config.example.php` nach `config.php` kopieren und anpassen. Wer die Datei lokal weiter versionieren möchte, kann `git update-index --skip-worktree config.php` verwenden.
 
-2. Optional: Rechte für Konfigdatei:
+3. Optional: Rechte für Konfigdatei:
 ```bash
 chmod 640 /var/www/html/drehbank/config.php
 ```

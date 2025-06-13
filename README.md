@@ -24,11 +24,12 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 ## 🚀 Installation
 
 1. **Dateien hochladen** nach `/var/www/html/drehbank`
-2. **Installer starten**:
+2. Kopiere `config.example.php` zu `config.php` und passe es bei Bedarf an. Optional kannst du `git update-index --skip-worktree config.php` verwenden, wenn die Datei lokal verfolgt bleiben soll.
+3. **Installer starten**:
    `https://DEIN_SERVER/drehbank/install.php`
-3. **Datenbankzugangsdaten eingeben**
-4. **Benutzerverwaltung aktivieren?** (Login-Pflicht)
-5. **Admin-Benutzer anlegen und Demo-Admin entfernen** (nur bei aktivierter Benutzerverwaltung)
+4. **Datenbankzugangsdaten eingeben**
+5. **Benutzerverwaltung aktivieren?** (Login-Pflicht)
+6. **Admin-Benutzer anlegen und Demo-Admin entfernen** (nur bei aktivierter Benutzerverwaltung)
    - Die Einstellung kann später über die Einstellungen (`settings.php`) oder `LOGIN_REQUIRED` in `config.php` geändert werden
 
 ## 🛠️ Erforderliche Erweiterungen

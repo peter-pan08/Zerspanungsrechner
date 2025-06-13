@@ -3,12 +3,16 @@
 // Stellt sicher, dass nur angemeldete Nutzer Zugriff haben
 // und vermeidet doppelte session_start()-Aufrufe.
 
+if (!defined('LOGIN_REQUIRED')) {
+    require 'config.php';
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Wenn kein Login, zurück zur Login-Seite
-if (empty($_SESSION['username'])) {
+// Wenn Login erforderlich und kein Benutzer angemeldet, weiterleiten
+if (LOGIN_REQUIRED && empty($_SESSION['username'])) {
     header('Location: login.php');
     exit;
 }

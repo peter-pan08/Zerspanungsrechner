@@ -1,4 +1,5 @@
 <?php
+  require_once 'config.php';
   // Für Seiten, die Session-Handling benötigen:
   if (defined('REQUIRE_SESSION')) {
     require 'session_check.php';
@@ -46,9 +47,11 @@
     <a href="zerspanung.php">🤖 Drehbank</a>
     <a href="fraesen.php">🛠️ Fräsen</a>
     <a href="admin.php">⚙️ Admin</a>
-    <a href="admin_user.php">👥 Benutzer</a>
-    <a href="profil.php">👤 Profil</a>
-    <a href="register.php">📝 Registrieren</a>
-    <a href="login.php">🔐 Login</a>
-    <a href="logout.php">🚪 Logout</a>
+    <?php if (LOGIN_REQUIRED): ?>
+      <a href="admin_user.php">👥 Benutzer</a>
+      <a href="profil.php">👤 Profil</a>
+      <a href="register.php">📝 Registrieren</a>
+      <a href="login.php">🔐 Login</a>
+      <a href="logout.php">🚪 Logout</a>
+    <?php endif; ?>
   </div>

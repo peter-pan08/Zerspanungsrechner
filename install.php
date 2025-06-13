@@ -35,6 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       <option value="false">Standard</option>
       <option value="true">Demo-Modus</option>
     </select>
+    <label>Benutzerverwaltung aktivieren?</label>
+    <select name="login_required">
+      <option value="true">Ja</option>
+      <option value="false">Nein</option>
+    </select>
     <label>Beispieldaten importieren?</label>
     <select name="import_demo">
       <option value="false">Nein</option>
@@ -52,14 +57,19 @@ $dbpass = $_POST['dbpass'];
 $dbname = $_POST['dbname'];
 $appuser = $_POST['appuser'];
 $apppass = $_POST['apppass'];
+$login_required = isset($_POST['login_required']) && $_POST['login_required'] === 'false' ? 'false' : 'true';
 $demo_mode = isset($_POST['demo_mode']) && $_POST['demo_mode'] === 'true' ? 'true' : 'false';
 $import_demo = isset($_POST['import_demo']) && $_POST['import_demo'] === 'true';
 
 $existing_demo = null;
+$existing_login = null;
 if (file_exists('config.php')) {
   include 'config.php';
   if (defined('DEMO_MODE')) {
     $existing_demo = DEMO_MODE ? 'true' : 'false';
+  }
+  if (defined('LOGIN_REQUIRED')) {
+    $existing_login = LOGIN_REQUIRED ? 'true' : 'false';
   }
 }
 
@@ -96,13 +106,16 @@ $tables = [
     vc FLOAT,
     fz FLOAT
   )",
-  "CREATE TABLE IF NOT EXISTS users (
+];
+
+if ($login_required === 'true') {
+  $tables[] = "CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     rolle VARCHAR(20) DEFAULT 'admin'
-  )"
-];
+  )";
+}
 
 foreach ($tables as $sql) {
   if (!$conn->query($sql)) {
@@ -114,8 +127,10 @@ $conn->query("CREATE USER IF NOT EXISTS '$appuser'@'localhost' IDENTIFIED BY '$a
 $conn->query("GRANT SELECT, INSERT, UPDATE, DELETE ON `$dbname`.* TO '$appuser'@'localhost'");
 $conn->query("FLUSH PRIVILEGES");
 
-$ph = password_hash("admin123", PASSWORD_DEFAULT);
-$conn->query("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES ('admin', '$ph', 'admin')");
+if ($login_required === 'true') {
+  $ph = password_hash("admin123", PASSWORD_DEFAULT);
+  $conn->query("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES ('admin', '$ph', 'admin')");
+}
 
 if ($import_demo && file_exists('beispieldaten.sql')) {
   $demoSql = file_get_contents('beispieldaten.sql');
@@ -128,9 +143,11 @@ if ($import_demo && file_exists('beispieldaten.sql')) {
 }
 
 $demo_setting = $existing_demo !== null ? $existing_demo : $demo_mode;
+$login_setting = $existing_login !== null ? $existing_login : $login_required;
 $config = <<<PHP
 <?php
 define('DEMO_MODE', $demo_setting);  // Demo-Modus aktiv: kein Löschen möglich
+define('LOGIN_REQUIRED', $login_setting);
 
 \$host = '$dbhost';
 \$user = '$appuser';
@@ -149,16 +166,17 @@ $messageCfg = $config_written
   ? "<p><strong>config.php</strong> wurde erfolgreich gespeichert.</p>"
   : "<p><strong>config.php</strong> ist bereits vorhanden und wurde nicht überschrieben.</p>";
 
+$loginInfo = '';
+if ($login_setting === 'true') {
+  $loginInfo = "<p><em>⚠️ Der Benutzer <strong>admin</strong> mit Passwort <strong>admin123</strong> ist ein Demo-Konto.<br>Bitte erstelle einen echten Admin und lösche das Demo-Konto anschließend aus der Benutzerverwaltung.</em></p>\n<p>Du kannst dich jetzt mit dem Admin-Benutzer <strong>admin</strong></p>\n<p>und dem Passwort <strong>admin123</strong></p>\n<p>unter <code>login.php</code> anmelden.</p>";
+}
+
 echo <<<HTML
 <h2>✅ Installation abgeschlossen</h2>
 $messageCfg
 <p>Verwendeter Datenbankbenutzer (App): <strong>$appuser</strong></p>
 <p>Die Datenbank <strong>$dbname</strong> wurde vorbereitet.</p>
-<p><em>⚠️ Der Benutzer <strong>admin</strong> mit Passwort <strong>admin123</strong> ist ein Demo-Konto.<br>
-Bitte erstelle einen echten Admin und lösche das Demo-Konto anschließend aus der Benutzerverwaltung.</em></p>
-<p>Du kannst dich jetzt mit dem Admin-Benutzer <strong>admin</strong></p>
-<p>und dem Passwort <strong>admin123</strong></p>
-<p>unter <code>login.php</code> anmelden.</p>
+$loginInfo
 <p><em>Tipp: Schütze die Datei <code>config.php</code> mit CHMOD 640</em></p>
 HTML;
 ?>

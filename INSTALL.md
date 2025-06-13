@@ -35,7 +35,7 @@ Hinweis: Die Tabelle `fraeser` enthält jetzt die Spalte `durchmesser` zur Ablag
    - Neuen Admin anlegen
    - Demo-Admin löschen
 
-Die Einstellung kann jederzeit in `config.php` über `LOGIN_REQUIRED` angepasst werden.
+Die Einstellung kann später über die Einstellungen (`settings.php`) oder `LOGIN_REQUIRED` in `config.php` angepasst werden.
 
 ---
 

@@ -47,6 +47,7 @@
     <a href="zerspanung.php">🤖 Drehbank</a>
     <a href="fraesen.php">🛠️ Fräsen</a>
     <a href="admin.php">⚙️ Admin</a>
+    <a href="settings.php">🔧 Einstellungen</a>
     <?php if (LOGIN_REQUIRED): ?>
       <a href="admin_user.php">👥 Benutzer</a>
       <a href="profil.php">👤 Profil</a>

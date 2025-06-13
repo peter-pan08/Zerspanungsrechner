@@ -16,7 +16,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 - 📝 Selbstregistrierung über `register.php` (automatisch `viewer`)
 - ⚠️ Schutz: Letzter Admin kann nicht gelöscht werden
 - 🛠 Webbasierter Installationsassistent (`install.php`)
-- 🔑 Login-Pflicht lässt sich über `LOGIN_REQUIRED` in `config.php` steuern
+- 🔑 Login-Pflicht lässt sich über die Einstellungen (`settings.php`) oder `LOGIN_REQUIRED` in `config.php` steuern
 - 🧭 Navigation über alle Seiten integriert
 - 🔄 Dropdown für den Vorschubmodus (fz / f / vf) im Rechner
 - 👥 Admin-Bereich zum Verwalten von Materialien, Schneidplatten und Fräsern
@@ -29,7 +29,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 3. **Datenbankzugangsdaten eingeben**
 4. **Benutzerverwaltung aktivieren?** (Login-Pflicht)
 5. **Admin-Benutzer anlegen und Demo-Admin entfernen** (nur bei aktivierter Benutzerverwaltung)
-   - Die Einstellung kann später über `LOGIN_REQUIRED` in `config.php` geändert werden
+   - Die Einstellung kann später über die Einstellungen (`settings.php`) oder `LOGIN_REQUIRED` in `config.php` geändert werden
 
 ## 🛠️ Erforderliche Erweiterungen
 

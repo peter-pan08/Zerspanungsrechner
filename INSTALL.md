@@ -24,15 +24,18 @@ chmod 640 /var/www/html/drehbank/config.php
 
 ## 🛠 Webbasierter Installer
 
-1. Browser öffnen:  
+1. Browser öffnen:
    `http://DEIN_SERVER/drehbank/install.php`
 
 2. Datenbankzugangsdaten und App-User anlegen
+3. Benutzerverwaltung aktivieren? (setzt `LOGIN_REQUIRED` in `config.php`)
 
 Hinweis: Die Tabelle `fraeser` enthält jetzt die Spalte `durchmesser` zur Ablage des Werkzeug-Ø. Der Installer legt diese Spalte automatisch an.
-3. Nach Login mit `admin` / `admin123`:
+4. Nach Login mit `admin` / `admin123` (nur wenn Benutzerverwaltung aktiv ist):
    - Neuen Admin anlegen
    - Demo-Admin löschen
+
+Die Einstellung kann jederzeit in `config.php` über `LOGIN_REQUIRED` angepasst werden.
 
 ---
 

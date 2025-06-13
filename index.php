@@ -1,4 +1,5 @@
 <?php
+  require_once 'config.php';
   // Für Seiten, die Session-Handling benötigen:
   if (defined('REQUIRE_SESSION')) {
     require 'session_check.php';
@@ -36,7 +37,9 @@
   <p>Willkommen zur öffentlichen Demoversion. Löschen und Bearbeiten sind deaktiviert.</p>
   <a href="zerspanung.php" class="button">🤖 Drehbank</a>
   <a href="fraesen.php" class="button">🛠️ Fräsen</a>
+  <?php if (LOGIN_REQUIRED): ?>
   <a href="login.php" class="button">🔐 Login</a>
+  <?php endif; ?>
   <p class="hinweis">⚠️ Im Demo-Modus können keine Daten gelöscht oder geändert werden.</p>
 </body>
 </html>

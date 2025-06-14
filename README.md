@@ -91,6 +91,10 @@ Führe bei bestehenden Setups nach dem Update auf diese Version `update.php` aus
 2. Rufe `https://DEIN_SERVER/drehbank/update.php` auf.
 3. Klicke auf **Update ausführen**, um die neue Spalte `durchmesser` in der Tabelle `fraeser` anzulegen.
 
+Hinweis: `config.php` wird jetzt durch `.gitignore` ausgeschlossen. Falls du sie
+noch im Repository hast, entferne sie mit `git rm --cached config.php`,
+committe diese Änderung und ziehe danach die neue Version.
+
 ## 🔐 Sicherheit
 
 - `config.php` nach Installation per `chmod 640` schützen

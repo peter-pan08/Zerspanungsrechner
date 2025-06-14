@@ -36,11 +36,11 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 
 ## 🛠️ Erforderliche Erweiterungen
 
-Für den Export werden folgende PHP-Bibliotheken benötigt:
+Für den Export werden die in `composer.json` definierten PHP-Bibliotheken benötigt.
+Installiere sie mit:
 
 ```bash
-composer require tecnickcom/tcpdf
-composer require phpoffice/phpspreadsheet
+composer install
 ```
 
 💡 Falls noch kein `composer` installiert ist:

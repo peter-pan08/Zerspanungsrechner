@@ -61,8 +61,14 @@ mysql -u root -p drehbank < beispieldaten.sql
 ## 📦 Erweiterungen installieren
 
 Zur Nutzung der Exportfunktionen (PDF, Excel) werden zwei PHP-Bibliotheken benötigt.
+Das Repository enthält bereits eine passende `composer.json` sowie eine `composer.lock`.
+Installiere die Abhängigkeiten daher einfach mit:
 
-Wenn du das Projekt über Git oder ZIP herunterlädst, stelle sicher, dass sich im Projektordner `/var/www/html/drehbank` eine Datei `composer.json` befindet. Falls nicht, erstelle sie manuell:
+```bash
+composer install
+```
+
+Falls du das Projekt ohne diese Dateien herunterlädst, kannst du folgendes Beispiel für eine eigene `composer.json` verwenden:
 
 ```json
 {

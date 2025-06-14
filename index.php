@@ -1,5 +1,5 @@
 <?php
-  require_once 'config.php';
+  require_once 'require_config.php';
   // Für Seiten, die Session-Handling benötigen:
   if (defined('REQUIRE_SESSION')) {
     require 'session_check.php';

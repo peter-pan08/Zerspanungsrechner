@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'require_config.php';
 if (LOGIN_REQUIRED) {
     define('REQUIRE_SESSION', true);
 }

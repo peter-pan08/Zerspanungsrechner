@@ -4,7 +4,7 @@
 // und vermeidet doppelte session_start()-Aufrufe.
 
 if (!defined('LOGIN_REQUIRED')) {
-    require 'config.php';
+    require 'require_config.php';
 }
 
 if (session_status() === PHP_SESSION_NONE) {

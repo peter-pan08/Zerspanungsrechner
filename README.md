@@ -48,6 +48,9 @@ composer require phpoffice/phpspreadsheet
 ```bash
 sudo apt install composer
 ```
+Anschließend im Projektordner `composer install` ausführen. Die installierten
+Abhängigkeiten landen im Ordner `vendor/`. Dieser Ordner und die Datei
+`composer.lock` sind in der Versionskontrolle ignoriert.
 
 ## 📂 Dateien & Seiten
 

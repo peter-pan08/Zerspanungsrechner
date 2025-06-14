@@ -2,7 +2,7 @@
   // define('REQUIRE_SESSION', true);
   $pageTitle = 'Registrieren';
   include 'header.php';
-require 'config.php';
+require 'require_config.php';
 $meldung = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

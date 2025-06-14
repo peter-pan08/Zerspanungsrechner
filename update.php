@@ -1,5 +1,5 @@
 <?php
-  require 'config.php';
+  require 'require_config.php';
   if (LOGIN_REQUIRED) {
     define('REQUIRE_SESSION', true);
   }
@@ -23,7 +23,7 @@
   </form>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
-  require 'config.php';
+  require 'require_config.php';
   $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   $res = $pdo->query("SHOW COLUMNS FROM fraeser LIKE 'durchmesser'");

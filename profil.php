@@ -3,7 +3,7 @@
   $pageTitle = 'Mein Profil';
   include 'header.php';
 require 'session_check.php';
-require 'config.php';
+require 'require_config.php';
 
 // Logged in user's name
 $currentUser = $_SESSION['username'];

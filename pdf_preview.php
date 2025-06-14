@@ -27,7 +27,7 @@ $save_success = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['save'])) {
     if (!empty($_POST['werkstoff'])) {
-      require 'config.php';
+      require 'require_config.php';
       $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
       $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

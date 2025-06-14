@@ -1,6 +1,6 @@
 <?php
 require 'session_check.php';
-require 'config.php';
+require 'require_config.php';
 
 if (defined('DEMO_MODE') && DEMO_MODE) {
   echo "🚫 Löschen im Demo-Modus nicht erlaubt.";

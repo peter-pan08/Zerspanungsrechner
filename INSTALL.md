@@ -6,6 +6,20 @@
 - MariaDB oder MySQL
 - Composer (`sudo apt install composer`)
 
+### Systempakete installieren
+
+```bash
+sudo apt update
+sudo apt install apache2 mariadb-server php php-mbstring php-xml php-gd php-zip php-mysql
+```
+
+**Benötigte PHP-Erweiterungen:** `mbstring`, `xml`, `zip`, `gd` – diese werden u. a. von TCPDF und PhpSpreadsheet genutzt.
+
+### Webserver konfigurieren
+
+- **Apache**: VirtualHost für `/var/www/html/drehbank` anlegen und bei Bedarf `AllowOverride All` setzen.
+- **Nginx**: Serverblock mit `root /var/www/html/drehbank;` sowie PHP-FPM-Anbindung konfigurieren.
+
 ---
 
 ## 📂 Projektbereitstellung

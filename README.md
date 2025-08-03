@@ -23,6 +23,20 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 
 ## 🚀 Installation
 
+### Systempakete installieren
+
+```bash
+sudo apt update
+sudo apt install apache2 mariadb-server php php-mbstring php-xml php-gd php-zip php-mysql
+```
+
+**Benötigte PHP-Erweiterungen:** `mbstring`, `xml`, `zip`, `gd` – erforderlich für TCPDF und PhpSpreadsheet.
+
+### Webserver konfigurieren
+
+- **Apache**: VirtualHost auf `/var/www/html/drehbank` verweisen, ggf. `AllowOverride All` aktivieren.
+- **Nginx**: Serverblock mit `root /var/www/html/drehbank;` und PHP-FPM-Einbindung erstellen.
+
 1. **Dateien hochladen** nach `/var/www/html/drehbank`
 2. **Installer starten**:
    `https://DEIN_SERVER/drehbank/install.php`

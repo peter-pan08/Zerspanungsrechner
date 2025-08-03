@@ -14,12 +14,20 @@
 ```bash
 sudo chown -R www-data:www-data /var/www/html/drehbank
 ```
-2. **Installer starten**:
+2. Datenbank und Benutzer anlegen:
+```sql
+CREATE DATABASE drehbank;
+CREATE USER 'drehuser'@'localhost' IDENTIFIED BY 'starkes-passwort';
+GRANT ALL PRIVILEGES ON drehbank.* TO 'drehuser'@'localhost';
+FLUSH PRIVILEGES;
+```
+   Diese Zugangsdaten müssen im Web‑Installer eingetragen werden.
+3. **Installer starten**:
    `http://DEIN_SERVER/drehbank/install.php`
    - Erstellt `config.php`, falls sie fehlt. Kopiere also keine Example-Datei vorab oder lösche/benenne vorhandene Kopien, damit der Installer neue Zugangsdaten schreiben kann.
    - Wer die Datei lokal weiter versionieren möchte, kann danach `git update-index --skip-worktree config.php` verwenden.
 
-3. Optional: Rechte für Konfigdatei:
+4. Optional: Rechte für Konfigdatei:
 ```bash
 chmod 640 /var/www/html/drehbank/config.php
 ```
@@ -31,7 +39,7 @@ chmod 640 /var/www/html/drehbank/config.php
 1. Browser öffnen:
    `http://DEIN_SERVER/drehbank/install.php`
 
-2. Datenbankzugangsdaten und App-User anlegen
+2. Datenbankzugangsdaten (z. B. `drehuser`) und App-User anlegen
 3. Benutzerverwaltung aktivieren? (setzt `LOGIN_REQUIRED` in `config.php`)
 
 Hinweis: Die Tabelle `fraeser` enthält jetzt die Spalte `durchmesser` zur Ablage des Werkzeug-Ø. Der Installer legt diese Spalte automatisch an.

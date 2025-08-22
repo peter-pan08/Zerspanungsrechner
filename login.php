@@ -1,5 +1,5 @@
 <?php
-require 'require_config.php';
+require_once 'db.php';
 session_start();
 
 // Bereits eingeloggt? Dann weiter zur Zerspanung (HTML-Datei)
@@ -18,29 +18,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === '' || $password === '') {
         $error = 'Bitte Benutzername und Passwort eingeben.';
     } else {
-        $mysqli = new mysqli($host, $user, $pass, $db);
-        if ($mysqli->connect_errno) {
-            $error = 'Fehler bei der Datenbankverbindung.';
+        $pdo = getPDO();
+        $stmt = $pdo->prepare(
+            "SELECT id, password_hash, rolle FROM users WHERE username = ? LIMIT 1"
+        );
+        $stmt->execute([$username]);
+        $row = $stmt->fetch();
+        if ($row && password_verify($password, $row['password_hash'])) {
+            $_SESSION['username']  = $username;
+            $_SESSION['rolle']     = $row['rolle'];
+            header('Location: zerspanung.php');
+            exit;
         } else {
-            $stmt = $mysqli->prepare(
-                "SELECT id, password_hash, rolle 
-                   FROM users 
-                  WHERE username = ? 
-                  LIMIT 1"
-            );
-            $stmt->bind_param('s', $username);
-            $stmt->execute();
-            $stmt->bind_result($id, $hash, $rolle);
-
-            if ($stmt->fetch() && password_verify($password, $hash)) {
-                $_SESSION['username']  = $username;
-                $_SESSION['rolle']     = $rolle;
-                header('Location: zerspanung.php');
-                exit;
-            } else {
-                $error = 'Ungültiger Benutzername oder Passwort.';
-            }
-            $stmt->close();
+            $error = 'Ungültiger Benutzername oder Passwort.';
         }
     }
 }

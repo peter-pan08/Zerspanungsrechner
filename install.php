@@ -79,12 +79,16 @@ if (file_exists('config.php')) {
   }
 }
 
-$conn = new mysqli($dbhost, $dbuser, $dbpass);
-if ($conn->connect_error) {
-  die("<p>❌ Verbindungsfehler: " . $conn->connect_error . "</p>");
+$dsn = "mysql:host=$dbhost";
+try {
+  $conn = new PDO($dsn, $dbuser, $dbpass, [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+  ]);
+  $conn->exec("CREATE DATABASE IF NOT EXISTS `$dbname`");
+  $conn->exec("USE `$dbname`");
+} catch (PDOException $e) {
+  die("<p>❌ Verbindungsfehler: " . $e->getMessage() . "</p>");
 }
-$conn->query("CREATE DATABASE IF NOT EXISTS `$dbname`") or die("<p>Fehler beim Erstellen der DB: " . $conn->error . "</p>");
-$conn->query("USE `$dbname`") or die("<p>Fehler beim Wechseln zur DB: " . $conn->error . "</p>");
 
 $tables = [
   "CREATE TABLE IF NOT EXISTS materialien (
@@ -124,27 +128,34 @@ if ($login_required === 'true') {
 }
 
 foreach ($tables as $sql) {
-  if (!$conn->query($sql)) {
-    echo "<p>❌ Fehler bei SQL: " . $conn->error . "</p>";
+  try {
+    $conn->exec($sql);
+  } catch (PDOException $e) {
+    echo "<p>❌ Fehler bei SQL: " . $e->getMessage() . "</p>";
   }
 }
 
-$conn->query("CREATE USER IF NOT EXISTS '$appuser'@'localhost' IDENTIFIED BY '$apppass'");
-$conn->query("GRANT SELECT, INSERT, UPDATE, DELETE ON `$dbname`.* TO '$appuser'@'localhost'");
-$conn->query("FLUSH PRIVILEGES");
+try {
+  $conn->exec("CREATE USER IF NOT EXISTS '$appuser'@'localhost' IDENTIFIED BY '$apppass'");
+  $conn->exec("GRANT SELECT, INSERT, UPDATE, DELETE ON `$dbname`.* TO '$appuser'@'localhost'");
+  $conn->exec("FLUSH PRIVILEGES");
+} catch (PDOException $e) {
+  echo "<p>❌ Fehler beim Anlegen des DB-Benutzers: " . $e->getMessage() . "</p>";
+}
 
 if ($login_required === 'true') {
   $ph = password_hash("admin123", PASSWORD_DEFAULT);
-  $conn->query("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES ('admin', '$ph', 'admin')");
+  $stmt = $conn->prepare("INSERT IGNORE INTO users (username, password_hash, rolle) VALUES ('admin', ?, 'admin')");
+  $stmt->execute([$ph]);
 }
 
 if ($import_demo && file_exists('beispieldaten.sql')) {
   $demoSql = file_get_contents('beispieldaten.sql');
-  if (!$conn->multi_query($demoSql)) {
-    echo "<p>Fehler beim Import der Beispieldaten: " . $conn->error . "</p>";
-  } else {
-    while ($conn->more_results() && $conn->next_result()) { }
+  try {
+    $conn->exec($demoSql);
     echo "<p>Beispieldaten wurden importiert.</p>";
+  } catch (PDOException $e) {
+    echo "<p>Fehler beim Import der Beispieldaten: " . $e->getMessage() . "</p>";
   }
 }
 

@@ -1,15 +1,12 @@
 <?php
-  require 'require_config.php';
+  require_once 'db.php';
   if (LOGIN_REQUIRED) {
     define('REQUIRE_SESSION', true);
   }
   $pageTitle = 'System-Update';
   include 'header.php';
-  if (LOGIN_REQUIRED) {
-    require 'session_check.php';
-    if ($_SESSION['rolle'] !== 'admin') {
+  if (LOGIN_REQUIRED && $_SESSION['rolle'] !== 'admin') {
       die('Zugriff verweigert');
-    }
   }
 ?>
 <style>
@@ -23,9 +20,7 @@
   </form>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
-  require 'require_config.php';
-  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo = getPDO();
   $res = $pdo->query("SHOW COLUMNS FROM fraeser LIKE 'durchmesser'");
   if ($res->rowCount() === 0) {
     $pdo->exec("ALTER TABLE fraeser ADD COLUMN durchmesser FLOAT");

@@ -27,9 +27,8 @@ $save_success = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['save'])) {
     if (!empty($_POST['werkstoff'])) {
-      require 'require_config.php';
-      $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      require_once 'db.php';
+      $pdo = getPDO();
 
       $stmt1 = $pdo->prepare("INSERT INTO materialien (name, gruppe, vc_hartmetall, kc) VALUES (?, ?, ?, ?)");
       $stmt1->execute([

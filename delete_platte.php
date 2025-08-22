@@ -1,6 +1,6 @@
 <?php
 require 'session_check.php';
-require 'require_config.php';
+require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   http_response_code(405);
@@ -12,8 +12,7 @@ if (defined('DEMO_MODE') && DEMO_MODE) {
   exit;
 }
 
-$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo = getPDO();
 
 if (isset($_POST['id'])) {
   $stmt = $pdo->prepare("DELETE FROM platten WHERE id = ?");

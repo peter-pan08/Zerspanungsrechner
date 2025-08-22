@@ -1,9 +1,8 @@
 <?php
 require 'session_check.php';
-require 'require_config.php';
+require_once 'db.php';
 
-$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo = getPDO();
 
 if (isset($_POST['loeschen'])) {
   if (defined('DEMO_MODE') && DEMO_MODE) {

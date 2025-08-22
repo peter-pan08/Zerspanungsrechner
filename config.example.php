@@ -1,4 +1,5 @@
 <?php
+define('DEBUG', true); // in Produktion auf false setzen
 define('DEMO_MODE', false);
 define('LOGIN_REQUIRED', true);
 

@@ -120,6 +120,7 @@ committe diese Änderung und ziehe danach die neue Version.
 ## 🔐 Sicherheit
 
 - `config.php` nach Installation per `chmod 640` schützen
+- `DEBUG=false` in `config.php` deaktiviert die Fehlerausgabe und wird für Produktionssysteme empfohlen
 - Standard-Adminkonto `admin/admin123` löschen
 - Admin darf nicht gelöscht werden, wenn letzter seiner Rolle
 

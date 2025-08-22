@@ -1,6 +1,12 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+if (file_exists('config.php')) {
+  require 'config.php';
+  if (defined('DEBUG') && DEBUG) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+  }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 ?>
@@ -146,6 +152,7 @@ $demo_setting = $existing_demo !== null ? $existing_demo : $demo_mode;
 $login_setting = $existing_login !== null ? $existing_login : $login_required;
 $config = <<<PHP
 <?php
+define('DEBUG', false);
 define('DEMO_MODE', $demo_setting);  // Demo-Modus aktiv: kein Löschen möglich
 define('LOGIN_REQUIRED', $login_setting);
 

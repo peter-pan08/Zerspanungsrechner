@@ -2,10 +2,9 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'Benutzerverwaltung';
   include 'header.php';
-  require 'require_config.php';
+  require_once 'db.php';
 
-  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo = getPDO();
 
   if ($_SESSION['rolle'] !== 'admin') {
       header('Location: index.php');

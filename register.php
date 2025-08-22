@@ -2,12 +2,11 @@
   // define('REQUIRE_SESSION', true);
   $pageTitle = 'Registrieren';
   include 'header.php';
-require 'require_config.php';
+require_once 'db.php';
 $meldung = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo = getPDO();
 
   $username = $_POST['username'];
   $passwort = $_POST['password'];

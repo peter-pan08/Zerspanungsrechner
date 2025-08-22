@@ -3,13 +3,12 @@
   $pageTitle = 'Mein Profil';
   include 'header.php';
 require 'session_check.php';
-require 'require_config.php';
+require_once 'db.php';
 
 // Logged in user's name
 $currentUser = $_SESSION['username'];
 
-$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo = getPDO();
 
 $meldung = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

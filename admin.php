@@ -67,6 +67,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
 
   <h2>Materialien verwalten</h2>
   <form id="materialForm">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <input type="hidden" id="mat_id">
     <input type="text" placeholder="Materialname" id="mat_name">
     <input type="text" placeholder="Typ" id="mat_typ">
@@ -90,6 +91,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
 
   <h2>Schneidplatten verwalten</h2>
   <form id="platteForm">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <input type="hidden" id="platt_id">
     <input type="text" placeholder="Bezeichnung (z.B. VCMT110304)" id="platt_name">
     <input type="text" placeholder="ISO-Typ (z.B. VCMT)" id="platt_typ">
@@ -112,6 +114,7 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
 
   <h2>Fräser verwalten</h2>
   <form id="fraeserForm">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <input type="hidden" id="frae_id">
     <input type="text" placeholder="Bezeichnung" id="frae_name">
     <input type="text" placeholder="Typ" id="frae_typ">
@@ -149,6 +152,8 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
 
     async function saveMaterial() {
       const formData = new FormData();
+      const token = document.querySelector('#materialForm input[name="csrf_token"]').value;
+      formData.append('csrf_token', token);
       if (materialEditId) formData.append('id', materialEditId);
       formData.append('name', document.getElementById("mat_name").value);
       formData.append('typ', document.getElementById("mat_typ").value);
@@ -163,9 +168,10 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
     }
 
     async function deleteMaterial(id) {
+      const token = document.querySelector('#materialForm input[name="csrf_token"]').value;
       await fetch('delete_material.php', {
         method: 'POST',
-        body: new URLSearchParams({ id })
+        body: new URLSearchParams({ id, csrf_token: token })
       });
       loadData();
     }
@@ -190,6 +196,8 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
 
     async function savePlatte() {
       const formData = new FormData();
+      const token = document.querySelector('#platteForm input[name="csrf_token"]').value;
+      formData.append('csrf_token', token);
       if (plattenEditId) formData.append('id', plattenEditId);
       formData.append('name', document.getElementById("platt_name").value);
       formData.append('typ', document.getElementById("platt_typ").value);
@@ -204,9 +212,10 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
     }
 
     async function deletePlatte(id) {
+      const token = document.querySelector('#platteForm input[name="csrf_token"]').value;
       await fetch('delete_platte.php', {
         method: 'POST',
-        body: new URLSearchParams({ id })
+        body: new URLSearchParams({ id, csrf_token: token })
       });
       loadData();
     }
@@ -239,6 +248,8 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
         return;
       }
       const formData = new FormData();
+      const token = document.querySelector('#fraeserForm input[name="csrf_token"]').value;
+      formData.append('csrf_token', token);
       if (fraeserEditId) formData.append('id', fraeserEditId);
       formData.append('name', document.getElementById("frae_name").value);
       formData.append('typ', document.getElementById("frae_typ").value);
@@ -255,7 +266,11 @@ if (!in_array($_SESSION['rolle'] ?? '', ['admin', 'editor'])) {
     }
 
     async function deleteFraeser(id) {
-      await fetch('delete_fraeser.php?id=' + id);
+      const token = document.querySelector('#fraeserForm input[name="csrf_token"]').value;
+      await fetch('delete_fraeser.php', {
+        method: 'POST',
+        body: new URLSearchParams({ id, csrf_token: token })
+      });
       loadData();
     }
 

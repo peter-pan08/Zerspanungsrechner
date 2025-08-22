@@ -1,5 +1,6 @@
 <?php
 require_once 'vendor/autoload.php';
+require_once 'csrf.php';
 
 function extract_data($text) {
   $data = [
@@ -25,6 +26,9 @@ $extracted = null;
 $save_success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+    die('Ungültiger CSRF-Token');
+  }
   if (isset($_POST['save'])) {
     if (!empty($_POST['werkstoff'])) {
       require_once 'db.php';
@@ -99,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <h2>🔍 PDF-Wertvorschau</h2>
   <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <label>PDF-Datei hochladen:</label>
     <input type="file" name="pdf" accept="application/pdf" required>
     <button type="submit">📤 Hochladen & Auslesen</button>
@@ -112,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php if ($extracted): ?>
   <h3>📋 Vorschau erkannter Werte:</h3>
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <label>Werkstoff:</label>
     <input name="werkstoff" value="<?= htmlspecialchars($extracted['werkstoff']) ?>">
     <label>Schnittgeschwindigkeit (vc):</label>

@@ -14,6 +14,12 @@
   $meldung = "";
   $validRoles = ['admin', 'editor', 'viewer'];
 
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+          die('Ungültiger CSRF-Token');
+      }
+  }
+
   if (isset($_POST['neuer_benutzer'])) {
       if (in_array($_POST['rolle'], $validRoles, true)) {
           $stmt = $pdo->prepare("INSERT INTO users (username, password_hash, rolle) VALUES (?, ?, ?)");
@@ -85,6 +91,7 @@
   <?php endif; ?>
 
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <input type="text" name="username" placeholder="Benutzername" required>
     <input type="password" name="password" placeholder="Passwort" required>
     <select name="rolle">
@@ -104,6 +111,7 @@
         <td><?= htmlspecialchars($n['rolle']) ?></td>
         <td>
           <form method="post" style="margin-bottom:5px">
+            <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($n['id']) ?>">
             <input type="password" name="password" placeholder="Neues Passwort (leer = bleibt)">
             <select name="rolle">
@@ -114,6 +122,7 @@
             <button type="submit" name="edit_benutzer">💾 Speichern</button>
           </form>
           <form method="post">
+            <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($n['id']) ?>">
             <button type="submit" name="loeschen" onclick="return confirm('Soll dieser Benutzer wirklich gelöscht werden?')">🗑️ Löschen</button>
           </form>

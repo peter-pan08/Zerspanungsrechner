@@ -12,6 +12,9 @@ $pdo = getPDO();
 
 $meldung = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+    die('Ungültiger CSRF-Token');
+  }
   $neuesPasswort = $_POST['password'];
   if (!empty($neuesPasswort)) {
     $hash = password_hash($neuesPasswort, PASSWORD_DEFAULT);
@@ -32,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <h2>👤 Mein Profil</h2>
   <p>Angemeldet als: <strong><?= htmlspecialchars($currentUser) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <label>Neues Passwort:</label>
     <input type="password" name="password" required>
     <button type="submit">🔒 Passwort ändern</button>

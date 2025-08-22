@@ -1,8 +1,15 @@
 <?php
 require 'session_check.php';
+require_once 'csrf.php';
 require_once 'db.php';
 
 $pdo = getPDO();
+
+if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+  http_response_code(400);
+  echo 'Ungültiger CSRF-Token';
+  exit;
+}
 
 if (isset($_POST['loeschen'])) {
   if (defined('DEMO_MODE') && DEMO_MODE) {

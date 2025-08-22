@@ -2,7 +2,11 @@
   define('REQUIRE_SESSION', true);
   $pageTitle = 'PDF-Upload';
   include 'header.php';
-  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['pdf'])) {
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+    die('Ungültiger CSRF-Token');
+  }
+  if (isset($_FILES['pdf'])) {
   $file = $_FILES['pdf']['tmp_name'];
   $dest = __DIR__ . '/uploads/' . basename($_FILES['pdf']['name']);
   if (!file_exists(__DIR__ . '/uploads')) {
@@ -25,6 +29,7 @@
   } else {
     echo "<p style='color:red'>❌ Fehler beim Hochladen der Datei.</p>";
   }
+  }
 }
 ?>
 <style>
@@ -36,6 +41,7 @@
 
   <h2>📤 PDF-Upload & Textanalyse</h2>
   <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <label>Wähle PDF-Datei aus:</label>
     <input type="file" name="pdf" accept="application/pdf" required>
     <button type="submit">⬆️ Hochladen & Auslesen</button>

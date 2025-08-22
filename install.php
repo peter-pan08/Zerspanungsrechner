@@ -8,6 +8,8 @@ if (file_exists('config.php')) {
   }
 }
 
+require_once 'csrf.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 ?>
 <!DOCTYPE html>
@@ -24,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 <body>
   <h2>🛠️ Web-Installer: Zerspanungsrechner</h2>
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <label>Datenbank-Host:</label>
     <input name="dbhost" value="localhost" required>
     <label>Datenbank-Benutzer (z. B. root):</label>
@@ -51,11 +54,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       <option value="false">Nein</option>
       <option value="true">Ja</option>
     </select>
-    <button type="submit">Installation starten</button>
+  <button type="submit">Installation starten</button>
   </form>
 </body>
 </html>
 <?php exit; }
+
+if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+  die('Ungültiger CSRF-Token');
+}
 
 $dbhost = $_POST['dbhost'];
 $dbuser = $_POST['dbuser'];

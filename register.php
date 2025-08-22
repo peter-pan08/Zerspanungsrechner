@@ -1,11 +1,14 @@
 <?php
   // define('REQUIRE_SESSION', true);
   $pageTitle = 'Registrieren';
-  include 'header.php';
+include 'header.php';
 require_once 'db.php';
 $meldung = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+    die('Ungültiger CSRF-Token');
+  }
   $pdo = getPDO();
 
   $username = $_POST['username'];
@@ -32,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </style>
   <h2>📝 Registrieren</h2>
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <input type="text" name="username" placeholder="Benutzername" required>
     <input type="password" name="password" placeholder="Passwort" required>
     <button type="submit">Konto erstellen</button>

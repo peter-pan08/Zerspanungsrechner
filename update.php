@@ -16,10 +16,14 @@
   <h2>🔄 Update-System</h2>
   <p>Dieses Skript führt Datenbankaktualisierungen für bestehende Installationen aus.</p>
   <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <button name="update" value="1">⚙️ Update ausführen</button>
   </form>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
+  if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+    die('Ungültiger CSRF-Token');
+  }
   $pdo = getPDO();
   $res = $pdo->query("SHOW COLUMNS FROM fraeser LIKE 'durchmesser'");
   if ($res->rowCount() === 0) {

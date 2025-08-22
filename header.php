@@ -1,5 +1,6 @@
 <?php
   require_once 'require_config.php';
+  require_once 'csrf.php';
   // Für Seiten, die Session-Handling benötigen:
   if (defined('REQUIRE_SESSION')) {
     require 'session_check.php';

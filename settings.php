@@ -14,6 +14,9 @@ if (LOGIN_REQUIRED) {
 
 $meldung = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Ungültiger CSRF-Token');
+    }
     $aktiv = isset($_POST['login_required']);
     $config = file_get_contents('config.php');
     if ($config !== false) {
@@ -42,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p class="info"><?= htmlspecialchars($meldung) ?></p>
 <?php endif; ?>
 <form method="post">
+  <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
   <label><input type="checkbox" name="login_required" <?= LOGIN_REQUIRED ? 'checked' : '' ?>> Login/Benutzerverwaltung aktiv</label>
   <button type="submit">Speichern</button>
 </form>

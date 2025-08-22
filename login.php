@@ -1,6 +1,7 @@
 <?php
 require_once 'db.php';
 session_start();
+require_once 'csrf.php';
 
 // Bereits eingeloggt? Dann weiter zur Zerspanung (HTML-Datei)
 if (isset($_SESSION['username'])) {
@@ -12,6 +13,9 @@ $error = '';
 $username = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Ungültiger CSRF-Token');
+    }
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
@@ -128,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="error"><?= htmlspecialchars($error) ?></p>
     <?php endif ?>
     <form method="post" action="login.php">
+      <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
       <label for="username">Benutzername</label>
       <input type="text" id="username" name="username" value="<?= htmlspecialchars($username) ?>" required>
 

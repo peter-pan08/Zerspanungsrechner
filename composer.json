@@ -2,5 +2,8 @@
   "require": {
     "tecnickcom/tcpdf": "^6.9",
     "phpoffice/phpspreadsheet": "^4.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12.3"
   }
 }

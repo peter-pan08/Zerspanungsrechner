@@ -64,11 +64,29 @@ if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
   die('Ungültiger CSRF-Token');
 }
 
+$logFile = __DIR__ . '/install.log';
+function log_message(string $message): void {
+  global $logFile;
+  $timestamp = date('Y-m-d H:i:s');
+  file_put_contents($logFile, "[$timestamp] $message\n", FILE_APPEND);
+}
+
+function validate_identifier(string $value, string $field): string {
+  if (!preg_match('/^[A-Za-z0-9_]+$/', $value)) {
+    $msg = "Ungültige Zeichen in $field";
+    log_message($msg);
+    die("<p>❌ $msg</p>");
+  }
+  return $value;
+}
+
+log_message('Installation gestartet');
+
 $dbhost = $_POST['dbhost'];
-$dbuser = $_POST['dbuser'];
+$dbuser = validate_identifier($_POST['dbuser'], 'Datenbank-Benutzer');
 $dbpass = $_POST['dbpass'];
-$dbname = $_POST['dbname'];
-$appuser = $_POST['appuser'];
+$dbname = validate_identifier($_POST['dbname'], 'Datenbank-Name');
+$appuser = validate_identifier($_POST['appuser'], 'App-Benutzername');
 $apppass = $_POST['apppass'];
 $login_required = isset($_POST['login_required']) && $_POST['login_required'] === 'false' ? 'false' : 'true';
 $demo_mode = isset($_POST['demo_mode']) && $_POST['demo_mode'] === 'true' ? 'true' : 'false';
@@ -91,10 +109,13 @@ try {
   $conn = new PDO($dsn, $dbuser, $dbpass, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
   ]);
-  $conn->exec("CREATE DATABASE IF NOT EXISTS `$dbname`");
-  $conn->exec("USE `$dbname`");
+  $conn->exec("CREATE DATABASE IF NOT EXISTS `{$dbname}`");
+  $conn->exec("USE `{$dbname}`");
+  log_message("Datenbank '$dbname' verbunden");
 } catch (PDOException $e) {
-  die("<p>❌ Verbindungsfehler: " . $e->getMessage() . "</p>");
+  $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+  log_message("Verbindungsfehler: " . $e->getMessage());
+  die("<p>❌ Verbindungsfehler: $error</p>");
 }
 
 $tables = [
@@ -138,16 +159,22 @@ foreach ($tables as $sql) {
   try {
     $conn->exec($sql);
   } catch (PDOException $e) {
-    echo "<p>❌ Fehler bei SQL: " . $e->getMessage() . "</p>";
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    log_message("Fehler bei SQL: " . $e->getMessage());
+    echo "<p>❌ Fehler bei SQL: $error</p>";
   }
 }
 
 try {
-  $conn->exec("CREATE USER IF NOT EXISTS '$appuser'@'localhost' IDENTIFIED BY '$apppass'");
-  $conn->exec("GRANT SELECT, INSERT, UPDATE, DELETE ON `$dbname`.* TO '$appuser'@'localhost'");
+  $appuser_q = $conn->quote($appuser);
+  $apppass_q = $conn->quote($apppass);
+  $conn->exec("CREATE USER IF NOT EXISTS $appuser_q@'localhost' IDENTIFIED BY $apppass_q");
+  $conn->exec("GRANT SELECT, INSERT, UPDATE, DELETE ON `{$dbname}`.* TO $appuser_q@'localhost'");
   $conn->exec("FLUSH PRIVILEGES");
 } catch (PDOException $e) {
-  echo "<p>❌ Fehler beim Anlegen des DB-Benutzers: " . $e->getMessage() . "</p>";
+  $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+  log_message("Fehler beim Anlegen des DB-Benutzers: " . $e->getMessage());
+  echo "<p>❌ Fehler beim Anlegen des DB-Benutzers: $error</p>";
 }
 
 if ($login_required === 'true') {
@@ -162,7 +189,9 @@ if ($import_demo && file_exists('beispieldaten.sql')) {
     $conn->exec($demoSql);
     echo "<p>Beispieldaten wurden importiert.</p>";
   } catch (PDOException $e) {
-    echo "<p>Fehler beim Import der Beispieldaten: " . $e->getMessage() . "</p>";
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    log_message("Fehler beim Import der Beispieldaten: " . $e->getMessage());
+    echo "<p>Fehler beim Import der Beispieldaten: $error</p>";
   }
 }
 
@@ -182,9 +211,14 @@ define('LOGIN_REQUIRED', $login_setting);
 PHP;
 
 $config_written = false;
-if (!file_exists("config.php")) {
-  file_put_contents("config.php", $config);
-  $config_written = true;
+if (!file_exists('config.php')) {
+  if (file_put_contents('config.php', $config) !== false) {
+    $config_written = true;
+    log_message('config.php wurde erstellt');
+  } else {
+    log_message('Fehler beim Schreiben der config.php');
+    echo '<p>❌ Fehler beim Schreiben der config.php</p>';
+  }
 }
 
 $messageCfg = $config_written
@@ -204,4 +238,5 @@ $messageCfg
 $loginInfo
 <p><em>Tipp: Schütze die Datei <code>config.php</code> mit CHMOD 640</em></p>
 HTML;
+log_message('Installation abgeschlossen');
 ?>

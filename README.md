@@ -71,8 +71,9 @@ composer install
 sudo apt install composer
 ```
 Anschließend im Projektordner `composer install` ausführen. Die installierten
-Abhängigkeiten landen im Ordner `vendor/`. Dieser Ordner und die Datei
-`composer.lock` sind in der Versionskontrolle ignoriert.
+Abhängigkeiten landen im Ordner `vendor/`. Der `vendor/`-Ordner bleibt in der Versionskontrolle ignoriert,
+`composer.lock` wird hingegen mit versioniert, um reproduzierbare Installationen sicherzustellen.
+Für Bibliotheken kann die Lock-Datei entfallen, für Anwendungen wie diese sollte sie jedoch versioniert werden.
 
 ## 📂 Dateien & Seiten
 

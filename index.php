@@ -65,10 +65,8 @@
   <p>Willkommen zur öffentlichen Demoversion. Löschen und Bearbeiten sind deaktiviert.</p>
   <a href="zerspanung.php" class="button">🤖 Drehbank</a>
   <a href="fraesen.php" class="button">🛠️ Fräsen</a>
-  <?php $LOGIN_REQUIRED_SAFE = defined('LOGIN_REQUIRED') ? LOGIN_REQUIRED : false; ?>
-  <?php if ($LOGIN_REQUIRED_SAFE): ?>
   <a href="login.php" class="button">🔐 Login</a>
-  <?php endif; ?>
+  <a href="register.php" class="button">📝 Registrieren</a>
   <p class="hinweis">⚠️ Im Demo-Modus können keine Daten gelöscht oder geändert werden.</p>
   <div class="page-branding" aria-label="Branding Dryba">
     <span>&copy; <?= date('Y') ?> M. Dryba</span>

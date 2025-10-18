@@ -65,24 +65,17 @@ include 'header.php';
 
   <h2>Fräsrechner</h2>
 
-  <label for="motorleistung">Motorleistung (Watt):</label>
-  <input type="number" id="motorleistung" value="750" oninput="berechne()">
-
-  <!-- Nach dem Feld für Motorleistung -->
-  <label for="motordrehmoment">Motordrehmoment (Nm):</label>
-  <input type="number" id="motordrehmoment" step="0.01" min="0" value="2.4" oninput="berechne()">
-
-  <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
-  <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
-
+  <!-- Kernparameter -->
   <label for="material">Material:</label>
   <select id="material" onchange="berechne()"></select>
 
-  <label for="schneidstoff">Schneidstoff:</label>
-  <select id="schneidstoff" onchange="berechne()">
-    <option value="hss">HSS</option>
-    <option value="hartmetall" selected>Hartmetall</option>
-  </select>
+  <div id="schneidstoffContainer">
+    <label for="schneidstoff">Schneidstoff:</label>
+    <select id="schneidstoff" onchange="berechne()">
+      <option value="hss">HSS</option>
+      <option value="hartmetall" selected>Hartmetall</option>
+    </select>
+  </div>
 
   <label for="fraeser">Fräser:</label>
   <select id="fraeser" onchange="fraeserGeaendert(); berechne();"></select>
@@ -95,6 +88,14 @@ include 'header.php';
 
   <label for="durchmesser">Werkzeugdurchmesser (mm):</label>
   <input type="number" id="durchmesser" value="100" oninput="berechne()">
+  <div id="durchmesserHinweis" style="display:none; margin-top:-6px; margin-bottom:8px; font-size:0.9em; color:#adb5bd;">
+    Durchmesser vom ausgewählten Fräser übernommen
+  </div>
+
+  <div id="zaehneContainer" style="display:none;">
+    <label for="zaehne">Zähnezahl z (nur manuell):</label>
+    <input type="number" id="zaehne" min="1" step="1" value="2" oninput="berechne()">
+  </div>
 
   <div id="drehzahlEingabe" style="display:none;">
     <label for="n_manuell">Drehzahl n (1/min):</label>
@@ -117,8 +118,23 @@ include 'header.php';
   <label id="feedLabel" for="feed">Vorschub fz (mm/Zahn):</label>
   <input type="number" id="feed" step="0.01" value="0.05" oninput="berechne()">
 
-  <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
-  <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
+  <!-- Maschinenparameter (optional) -->
+  <details id="maschinenDetails" style="margin-top:6px;">
+    <summary style="cursor:pointer; user-select:none;">Maschinenparameter (optional)</summary>
+    <div style="margin-top:10px;">
+      <label for="motorleistung">Motorleistung (Watt):</label>
+      <input type="number" id="motorleistung" value="750" oninput="berechne()">
+
+      <label for="motordrehmoment">Motordrehmoment (Nm):</label>
+      <input type="number" id="motordrehmoment" step="0.01" min="0" value="2.4" oninput="berechne()">
+
+      <label for="untersetzung">Untersetzung (z. B. 1.5 = 1.5:1):</label>
+      <input type="number" id="untersetzung" step="0.1" value="1" oninput="berechne()">
+
+      <label for="wirkungsgrad">Getriebewirkungsgrad (z.B. 0.95):</label>
+      <input type="number" id="wirkungsgrad" step="0.01" min="0.7" max="1" value="0.95" oninput="berechne()">
+    </div>
+  </details>
 
   <!-- Ausgabe -->
   <div class="result" id="ausgabe"></div>
@@ -156,8 +172,9 @@ include 'header.php';
       else if (mode === 'f') label.textContent = 'Vorschub f (mm/U):';
       else label.textContent = 'Vorschub vf (mm/min):';
       if (mode === 'fz') {
-        const idx = parseInt(document.getElementById('fraeser').value);
-        if (fraeser[idx] && fraeser[idx].fz) {
+        const idxRaw = document.getElementById('fraeser').value;
+        const idx = parseInt(idxRaw);
+        if (!isNaN(idx) && idx >= 0 && fraeser[idx] && fraeser[idx].fz) {
           document.getElementById('feed').value = fraeser[idx].fz;
         }
       }
@@ -165,16 +182,24 @@ include 'header.php';
 
 function berechne() {
   if (!materialien.length) return;
-  const motorleistung = parseFloat(document.getElementById('motorleistung').value);
-  const untersetzung = parseFloat(document.getElementById('untersetzung').value) || 1;
-  const wirkungsgrad = parseFloat(document.getElementById('wirkungsgrad').value) || 0.95;
+  const motorleistung = parseFloat(document.getElementById('motorleistung').value || '750');
+  const untersetzung = parseFloat(document.getElementById('untersetzung').value || '1') || 1;
+  const wirkungsgrad = parseFloat(document.getElementById('wirkungsgrad').value || '0.95') || 0.95;
   const d = parseFloat(document.getElementById('durchmesser').value);
   const ap = parseFloat(document.getElementById('ap').value);
   const ae = parseFloat(document.getElementById('ae').value);
   const feed = parseFloat(document.getElementById('feed').value);
 
   const mat = materialien[parseInt(document.getElementById('material').value)];
-  const schn = document.getElementById('schneidstoff').value;
+  // Schneidstoff automatisch aus Fräser ableiten, falls möglich
+  let schn = document.getElementById('schneidstoff').value;
+  const fraeserSel = document.getElementById('fraeser').value;
+  const fraeserIdx = parseInt(fraeserSel);
+  if (!isNaN(fraeserIdx) && fraeserIdx >= 0 && fraeser[fraeserIdx]) {
+    const typ = (fraeser[fraeserIdx].typ || '').toLowerCase();
+    if (typ.includes('hss')) schn = 'hss';
+    else if (typ.includes('vhm') || typ.includes('hartmetall')) schn = 'hartmetall';
+  }
   const vc = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
   const kc = mat.kc;
 
@@ -186,8 +211,15 @@ function berechne() {
   }
 
   const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
-  const tool = fraeser[parseInt(document.getElementById('fraeser').value)];
-  const z = tool.zaehne || 1;
+  let tool = null;
+  let z = 1;
+  if (!isNaN(fraeserIdx) && fraeserIdx >= 0) {
+    tool = fraeser[fraeserIdx];
+    z = tool && tool.zaehne ? tool.zaehne : 1;
+  } else {
+    const zManual = parseInt(document.getElementById('zaehne').value);
+    if (!isNaN(zManual) && zManual > 0) z = zManual;
+  }
 
   let fz, f, vf;
   const mode = document.getElementById('feedMode').value;
@@ -239,7 +271,7 @@ function berechne() {
     warnung = `<div class='warn'>⚠️ Leistungs- oder Drehmomentgrenze erreicht (${motorLast.toFixed(0)} W = ${lastProzent.toFixed(0)}% von ${motorleistung} W, Drehmoment ${drehmomentMotor.toFixed(2)} Nm = ${drehmomentMotorProzent.toFixed(0)}% von ${motordrehmoment} Nm)</div>`;
   }
 
-  const gruppenText = tool.gruppen.split(',').map(g => gruppenMap[g]).join(', ');
+  const gruppenText = tool && tool.gruppen ? tool.gruppen.split(',').map(g => gruppenMap[g]).join(', ') : '-';
 
   document.getElementById('ausgabe').innerHTML = `
     <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>
@@ -253,7 +285,7 @@ function berechne() {
     <strong>Schnittkraft:</strong> ${Fc.toFixed(0)} N<br>
     <strong>Drehmoment (Spindel):</strong> ${drehmomentSpindel.toFixed(1)} Nm<br>
     <strong>Drehmoment (Motor):</strong> ${drehmomentMotor.toFixed(2)} Nm (${drehmomentMotorProzent.toFixed(0)}% von ${motordrehmoment} Nm)<br><br>
-    <strong>Fräser:</strong> ${tool.name} (${tool.typ}) – für ${gruppenText}, vc ${tool.vc} m/min
+    <strong>Fräser:</strong> ${tool ? `${tool.name} (${tool.typ}) – für ${gruppenText}, vc ${tool.vc} m/min` : 'Manueller Fräser'}
     ${warnung}
   `;
 
@@ -265,7 +297,7 @@ function berechne() {
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({
       material: mat.name,
-      fraeser: tool.name,
+      fraeser: tool ? tool.name : 'Manuell',
       vc: vc_berechnet.toFixed(1),
       fz,
       f,
@@ -295,18 +327,52 @@ function berechne() {
 
   function fuelleFraeserDropdown() {
       const sel = document.getElementById('fraeser'); sel.innerHTML = '';
+      sel.innerHTML += `<option value="-1">Manueller Fräser</option>`;
       fraeser.forEach((p, i) => sel.innerHTML += `<option value="${i}">${p.name} (${p.typ}) – für ${p.gruppen.split(',').map(g=>gruppenMap[g]).join(', ')}</option>`);
   }
 
   function fraeserGeaendert() {
-      const idx = parseInt(document.getElementById('fraeser').value);
-      if (fraeser[idx]) {
-        if (fraeser[idx].durchmesser) {
-          document.getElementById('durchmesser').value = fraeser[idx].durchmesser;
+      const selVal = document.getElementById('fraeser').value;
+      const idx = parseInt(selVal);
+      const durchmesserInput = document.getElementById('durchmesser');
+      const dHinweis = document.getElementById('durchmesserHinweis');
+      const szContainer = document.getElementById('schneidstoffContainer');
+      const zContainer = document.getElementById('zaehneContainer');
+
+      if (!isNaN(idx) && idx >= 0 && fraeser[idx]) {
+        // Fräser aus DB gewählt
+        const fr = fraeser[idx];
+        if (fr.durchmesser) {
+          durchmesserInput.value = fr.durchmesser;
+          durchmesserInput.disabled = true;
+          dHinweis.style.display = 'block';
+        } else {
+          durchmesserInput.disabled = false;
+          dHinweis.style.display = 'none';
         }
-        if (fraeser[idx].fz && document.getElementById('feedMode').value === 'fz') {
-          document.getElementById('feed').value = fraeser[idx].fz;
+        // Schneidstoff automatisch ableiten und Dropdown ausblenden (falls erkennbar)
+        const typ = (fr.typ || '').toLowerCase();
+        if (typ.includes('hss')) {
+          document.getElementById('schneidstoff').value = 'hss';
+          szContainer.style.display = 'none';
+        } else if (typ.includes('vhm') || typ.includes('hartmetall')) {
+          document.getElementById('schneidstoff').value = 'hartmetall';
+          szContainer.style.display = 'none';
+        } else {
+          szContainer.style.display = 'block';
         }
+        // Standard fz übernehmen
+        if (fr.fz && document.getElementById('feedMode').value === 'fz') {
+          document.getElementById('feed').value = fr.fz;
+        }
+        // z aus DB verwenden, manuelle Eingabe ausblenden
+        zContainer.style.display = 'none';
+      } else {
+        // Manueller Fräser
+        durchmesserInput.disabled = false;
+        dHinweis.style.display = 'none';
+        szContainer.style.display = 'block';
+        zContainer.style.display = 'block';
       }
   }
 

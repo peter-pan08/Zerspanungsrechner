@@ -7,6 +7,7 @@ Ein interaktiver Zerspanungsrechner mit Material- und Werkzeugdatenbank, Benutze
 - 💠 Material-, Schneidplatten- **und Fräser-Datenbank** (verwaltbar via Admin, speichert den Durchmesser je Fräser)
 - 🧮 Zerspanungsrechner für **Drehbank und Fräsen** mit Leistungsberechnung, Schnittdaten, Motorlastanzeige und Warnung
 - ✨ Fräsrechner unterstützt Werkzeugdurchmesser sowie wählbare Vorschub-Modi (fz, f oder vf)
+- ✨ Fräsen: vereinfachte Eingabe mit „Manueller Fräser“, automatischer Schneidstoff-Erkennung (HSS/VHM) und optionalen Maschinenparametern
 - 📤 Export: PDF, Excel (XLSX), CSV
 - 🌐 Benutzerverwaltung mit Rollen:
   - `admin`: vollständiger Zugriff
@@ -96,6 +97,18 @@ Für Bibliotheken kann die Lock-Datei entfallen, für Anwendungen wie diese soll
 ### Vorschubmodus wählen
 
 Direkt beim Eingabefeld für den Vorschub findest du ein Dropdown zur Wahl des Modus `fz`, `f` oder `vf`. Der Labeltext passt sich entsprechend an und der eingegebene Wert wird als Vorschub pro Zahn, pro Umdrehung oder als Vorschubgeschwindigkeit interpretiert. Wählst du `fz` und änderst den Fräser, wird automatisch der empfohlene fz-Wert aus der Datenbank geladen. Der Export speichert alle drei Werte und verwendet den aktuell aktiven Modus.
+
+
+## 🧰 Fräsen – vereinfachte Eingabe
+
+- Fräser-Auswahl: Zusätzlich zu den gespeicherten Werkzeugen gibt es die Option `Manueller Fräser`.
+  - Datenbank-Fräser: Der Durchmesser wird aus der DB übernommen und das Feld gesperrt. Die Zähnezahl `z` kommt aus der DB.
+  - Manueller Fräser: Durchmesser und Zähnezahl `z` sind editierbar.
+- Schneidstoff: Wird automatisch aus dem Fräser-Typ erkannt (z. B. `HSS` oder `VHM/Hartmetall`).
+  - Wenn eindeutig erkannt, blendet sich das Schneidstoff-Dropdown aus.
+  - Ist der Typ nicht eindeutig, bleibt das Dropdown sichtbar und frei wählbar.
+- Maschinenparameter: Motorleistung, Motordrehmoment, Untersetzung und Wirkungsgrad sind in einem aufklappbaren Bereich `Maschinenparameter (optional)` gruppiert.
+- Komfort: Bei Modus `fz` wird – falls vorhanden – der empfohlene fz-Wert des ausgewählten Fräsers automatisch übernommen.
 
 
 ## 📦 Beispieldaten

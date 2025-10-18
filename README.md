@@ -57,6 +57,35 @@ FLUSH PRIVILEGES;
    - Die Einstellung kann später über die Einstellungen (`settings.php`) oder `LOGIN_REQUIRED` in `config.php` geändert werden
 7. *(Fallback)* Sollte der Installer nicht genutzt werden können, kopiere `config.example.php` manuell zu `config.php` und passe die Werte an.
 
+## 🧑‍💻 Deploy-Checkliste (Server)
+
+- `config.php` bleibt lokal: Wird über `require_config.php` geladen und ist per `.gitignore` ausgeschlossen. Niemals committen.
+- Abhängigkeiten installieren: `composer install --no-dev --optimize-autoloader`
+- PHP-Erweiterungen: `php-mbstring`, `php-xml`, `php-zip`, `php-gd`, `php-mysql`
+- Dateirechte (Beispiel): `chown -R www-data:www-data /var/www/html/Zerspanungsrechner && chmod 640 /var/www/html/Zerspanungsrechner/config.php`
+- Nach Updates ggf. `update.php` im Browser aufrufen (z. B. neue DB-Spalten).
+
+### Update bestehender Server-Installationen
+
+1) Optional Backup der lokalen Konfig: `cp config.php config.php.bak-$(date +%F)`
+2) Pull ausführen: `git pull`
+3) Abhängigkeiten aktualisieren: `composer install --no-dev --optimize-autoloader`
+4) Installer/Updater prüfen: `update.php` bei Bedarf ausführen
+
+Hinweis zu `composer.lock`:
+- Die Datei ist versioniert und sollte NICHT ignoriert werden. Verwende auf dem Server `composer install`, nicht `composer update`.
+
+### Troubleshooting: Git-Pull mit alter, getrackter config.php
+
+Falls ein altes Deployment `config.php` noch getrackt hatte und `git pull` blockiert:
+
+- Änderungen sichern und Arbeitsverzeichnis bereinigen:
+  - `cp config.php config.php.bak-$(date +%F)`
+  - `git reset --hard HEAD`
+- Lokale Konfig zurücklegen: `cp config.php.bak-<DATUM> config.php`
+- Prüfen, dass `config.php` ignoriert wird: `git check-ignore -v config.php` (soll `.gitignore` melden)
+- Abhängigkeiten installieren: `composer install --no-dev --optimize-autoloader`
+
 ## 🛠️ Erforderliche Erweiterungen
 
 Für den Export werden die in `composer.json` definierten PHP-Bibliotheken benötigt.

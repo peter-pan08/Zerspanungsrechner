@@ -71,6 +71,7 @@
   </style>
 </head>
 <body>
+  <?php $LOGIN_REQUIRED_SAFE = defined('LOGIN_REQUIRED') ? LOGIN_REQUIRED : false; ?>
   <div class="top-nav">
     <img src="dryba_logo_100.svg" alt="Dryba Logo" class="logo">
     <a href="index.php">🏠 Startseite</a>
@@ -78,7 +79,7 @@
     <a href="fraesen.php">🛠️ Fräsen</a>
     <a href="admin.php">⚙️ Admin</a>
     <a href="settings.php">🔧 Einstellungen</a>
-    <?php if (LOGIN_REQUIRED): ?>
+    <?php if ($LOGIN_REQUIRED_SAFE): ?>
       <a href="admin_user.php">👥 Benutzer</a>
       <a href="profil.php">👤 Profil</a>
       <a href="register.php">📝 Registrieren</a>

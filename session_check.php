@@ -11,8 +11,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Fallback: Wenn LOGIN_REQUIRED nicht definiert ist, standardmäßig kein Login erzwingen
+$__login_required = defined('LOGIN_REQUIRED') ? LOGIN_REQUIRED : false;
+
 // Wenn Login erforderlich und kein Benutzer angemeldet, weiterleiten
-if (LOGIN_REQUIRED && empty($_SESSION['username'])) {
+if ($__login_required && empty($_SESSION['username'])) {
     header('Location: login.php');
     exit;
 }

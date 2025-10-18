@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .info { margin-top: 15px; font-weight: bold; }
   </style>
   <h2>👤 Mein Profil</h2>
-  <p>Angemeldet als: <strong><?= htmlspecialchars($currentUser) ?></strong> (<?= $_SESSION['rolle'] ?>)</p>
+  <p>Angemeldet als: <strong><?= htmlspecialchars($currentUser) ?></strong> (<?= htmlspecialchars((string)($_SESSION['rolle'] ?? '')) ?>)</p>
   <form method="post">
     <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
     <label>Neues Passwort:</label>

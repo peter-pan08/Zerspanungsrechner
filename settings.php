@@ -1,13 +1,18 @@
 <?php
 require_once 'require_config.php';
-if (LOGIN_REQUIRED) {
+
+$LOGIN_REQUIRED_SAFE = defined('LOGIN_REQUIRED') ? LOGIN_REQUIRED : false;
+if ($LOGIN_REQUIRED_SAFE) {
     define('REQUIRE_SESSION', true);
+    require 'session_check.php';
 }
+
 $pageTitle = 'Einstellungen';
 include 'header.php';
-if (LOGIN_REQUIRED) {
-    require 'session_check.php';
-    if ($_SESSION['rolle'] !== 'admin') {
+
+if ($LOGIN_REQUIRED_SAFE) {
+    if (empty($_SESSION['rolle']) || $_SESSION['rolle'] !== 'admin') {
+        http_response_code(403);
         die('Zugriff verweigert');
     }
 }
@@ -24,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $config = preg_replace("/define\('LOGIN_REQUIRED',\s*(true|false)\);/", "define('LOGIN_REQUIRED', $newVal);", $config);
         if (file_put_contents('config.php', $config) !== false) {
             $meldung = 'Einstellungen gespeichert.';
-            define('LOGIN_REQUIRED', $aktiv);
+            // Änderung wird in der nächsten Anfrage wirksam; kein erneutes define() hier
         } else {
             $meldung = 'Fehler beim Schreiben der config.php';
         }
@@ -46,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 <form method="post">
   <input type="hidden" name="csrf_token" value="<?= generate_csrf_token(); ?>">
-  <label><input type="checkbox" name="login_required" <?= LOGIN_REQUIRED ? 'checked' : '' ?>> Login/Benutzerverwaltung aktiv</label>
+  <label><input type="checkbox" name="login_required" <?= $LOGIN_REQUIRED_SAFE ? 'checked' : '' ?>> Login/Benutzerverwaltung aktiv</label>
   <button type="submit">Speichern</button>
 </form>
 </body>

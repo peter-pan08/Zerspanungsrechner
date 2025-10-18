@@ -117,6 +117,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-weight: bold;
       margin-bottom: 10px;
     }
+    /* Branding unten rechts wie bei Torprüfungen */
+    .page-branding {
+      position: fixed;
+      right: 1.2rem;
+      bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      pointer-events: auto;
+      z-index: 100;
+      transition: transform 0.2s ease;
+    }
+    .page-branding:hover {
+      transform: scale(1.6);
+      transform-origin: bottom right;
+    }
+    .page-branding img {
+      height: 48px;
+      width: auto;
+      display: block;
+    }
+    .page-branding span {
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: rgba(148, 163, 184, 0.8);
+    }
   </style>
 </head>
 <body>
@@ -141,6 +169,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <button type="submit">Einloggen</button>
     </form>
+  </div>
+  <div class="page-branding" aria-label="Branding Dryba">
+    <span>&copy; <?= date('Y') ?> M. Dryba</span>
+    <img src="Logo/dryba_logo.svg" alt="Dryba Logo">
   </div>
 </body>
 </html>

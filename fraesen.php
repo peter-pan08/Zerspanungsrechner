@@ -191,28 +191,12 @@ function berechne() {
   const feed = parseFloat(document.getElementById('feed').value);
 
   const mat = materialien[parseInt(document.getElementById('material').value)];
-  // Schneidstoff automatisch aus Fräser ableiten, falls möglich
-  let schn = document.getElementById('schneidstoff').value;
-  const fraeserSel = document.getElementById('fraeser').value;
-  const fraeserIdx = parseInt(fraeserSel);
-  if (!isNaN(fraeserIdx) && fraeserIdx >= 0 && fraeser[fraeserIdx]) {
-    const typ = (fraeser[fraeserIdx].typ || '').toLowerCase();
-    if (typ.includes('hss')) schn = 'hss';
-    else if (typ.includes('vhm') || typ.includes('hartmetall')) schn = 'hartmetall';
-  }
-  const vc = schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall;
-  const kc = mat.kc;
-
-  let n;
-  if (document.getElementById('modus').value === 'vc') {
-    n = (1000 * vc) / (Math.PI * d);
-  } else {
-    n = parseFloat(document.getElementById('n_manuell').value);
-  }
-
-  const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
+  const kc = parseFloat(mat.kc || 0) || 0;
   let tool = null;
   let z = 1;
+
+  const fraeserSel = document.getElementById('fraeser').value;
+  const fraeserIdx = parseInt(fraeserSel);
   if (!isNaN(fraeserIdx) && fraeserIdx >= 0) {
     tool = fraeser[fraeserIdx];
     z = tool && tool.zaehne ? tool.zaehne : 1;
@@ -220,6 +204,26 @@ function berechne() {
     const zManual = parseInt(document.getElementById('zaehne').value);
     if (!isNaN(zManual) && zManual > 0) z = zManual;
   }
+
+  // Schneidstoff automatisch aus Fräser ableiten, falls möglich
+  let schn = document.getElementById('schneidstoff').value;
+  if (!isNaN(fraeserIdx) && fraeserIdx >= 0 && fraeser[fraeserIdx]) {
+    const typ = (fraeser[fraeserIdx].typ || '').toLowerCase();
+    if (typ.includes('hss')) schn = 'hss';
+    else if (typ.includes('vhm') || typ.includes('hartmetall')) schn = 'hartmetall';
+  }
+  const vc_material = parseFloat((schn === 'hss' ? mat.vc_hss : mat.vc_hartmetall) || 0) || 0;
+  const vc_tool = parseFloat((tool && tool.vc) || 0) || 0;
+  const vc = vc_tool > 0 ? vc_tool : vc_material;
+
+  let n;
+  if (document.getElementById('modus').value === 'vc') {
+    n = (d > 0 && vc > 0) ? (1000 * vc) / (Math.PI * d) : 0;
+  } else {
+    n = parseFloat(document.getElementById('n_manuell').value) || 0;
+  }
+
+  const vc_berechnet = (Math.PI * d * n) / 1000; // m/min
 
   let fz, f, vf;
   const mode = document.getElementById('feedMode').value;
@@ -237,16 +241,16 @@ function berechne() {
     fz = (n && z) ? feed / (n * z) : 0;
   }
 
-  // Spanvolumen q in mm³/min und dann in cm³/min
+  // Spanvolumen q in mm^3/min und dann in cm^3/min
   const q_mm3 = ap * ae * vf; // mm³/min
   const q = q_mm3 / 1000; // cm³/min
 
-  // Schnittkraft Fc = kc * ap * f
-  const Fc = kc * ap * ae; // N
-
-  // Leistungsaufnahme (kW): P = (Fc * vc_berechnet) / 60000
-  const leistung = (Fc * vc_berechnet) / 60000;
+  // Leistungsaufnahme aus spezifischer Schnittkraft und Zeitspanvolumen
+  const leistung = (kc * q_mm3) / 60000000; // kW
   const leistungWatt = leistung * 1000;
+
+  // Schnittkraft aus Leistung und Schnittgeschwindigkeit ableiten
+  const Fc = vc_berechnet > 0 ? (leistung * 60000) / vc_berechnet : 0; // N
 
   // Drehmoment an der Spindel
   const drehmomentSpindel = (Fc * d / 2) / 1000; // Nm
@@ -260,9 +264,9 @@ function berechne() {
   // Motorlast (mechanisch am Motor)
   const motorLast = leistungWatt / wirkungsgrad;
 
-  const lastProzent = (motorLast / motorleistung) * 100;
+  const lastProzent = motorleistung ? (motorLast / motorleistung) * 100 : 0;
   const motordrehmoment = parseFloat(document.getElementById('motordrehmoment').value) || 2.4;
-  const drehmomentMotorProzent = (drehmomentMotor / motordrehmoment) * 100;
+  const drehmomentMotorProzent = motordrehmoment ? (drehmomentMotor / motordrehmoment) * 100 : 0;
 
   let warnung = '';
   if (lastProzent >= 95 || drehmomentMotorProzent >= 95) {
@@ -272,9 +276,11 @@ function berechne() {
   }
 
   const gruppenText = tool && tool.gruppen ? tool.gruppen.split(',').map(g => gruppenMap[g]).join(', ') : '-';
+  const vcQuelleLabel = vc_tool > 0 ? 'Fraeser' : `Material (${schn === 'hss' ? 'HSS' : 'Hartmetall'})`;
 
   document.getElementById('ausgabe').innerHTML = `
     <strong>Material:</strong> ${mat.name} (${mat.gruppe} – ${gruppenMap[mat.gruppe]})<br>
+    <strong>vc-Quelle:</strong> ${vcQuelleLabel}<br>
     <strong>Schnittgeschwindigkeit:</strong> ${vc_berechnet.toFixed(1)} m/min<br>
     <strong>Spindeldrehzahl:</strong> ${n.toFixed(0)} U/min<br>
     <strong>Motordrehzahl:</strong> ${nMot.toFixed(0)} U/min (Untersetzung ${untersetzung})<br>

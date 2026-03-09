@@ -139,6 +139,26 @@ Direkt beim Eingabefeld für den Vorschub findest du ein Dropdown zur Wahl des M
 - Maschinenparameter: Motorleistung, Motordrehmoment, Untersetzung und Wirkungsgrad sind in einem aufklappbaren Bereich `Maschinenparameter (optional)` gruppiert.
 - Komfort: Bei Modus `fz` wird – falls vorhanden – der empfohlene fz-Wert des ausgewählten Fräsers automatisch übernommen.
 
+## 📐 Berechnungsmodell (Drehen vs. Fräsen)
+
+Die Berechnung wurde vereinheitlicht, damit die Angaben zwischen Dreh- und Fräsrechner schlüssig bleiben.
+
+- **Drehen**
+  - `n = (1000 * vc) / (pi * D)`
+  - `vf = n * f`
+  - `Fc = kc * ap * f`
+  - `Pc = (Fc * vc) / 60000` (kW)
+- **Fräsen**
+  - `n = (1000 * vc) / (pi * D)`
+  - `vf = n * f` oder `vf = n * z * fz`
+  - `Q = ap * ae * vf` (Zeitspanvolumen in mm^3/min)
+  - `Pc = (kc * Q) / 60000000` (kW)
+  - `Fc = (Pc * 60000) / vc`
+
+Hinweise:
+- Im Fräsrechner wird `vc` bevorzugt aus dem Fräserdatensatz genommen, wenn dort ein Wert hinterlegt ist, sonst aus dem Material (HSS/Hartmetall).
+- Die Motorlast berücksichtigt weiterhin Untersetzung und Wirkungsgrad separat.
+
 
 ## 📦 Beispieldaten
 
